@@ -2,14 +2,14 @@ import { useForm } from 'react-hook-form';
 import { useState, type ReactElement } from 'react';
 import { api } from '../../api/axios';
 import { ROUTES } from '../../constants/routes';
-import { Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 
 type TFormProps = {
     onSwitch: () => void;
 };
 
 const RegisterForm = ({ onSwitch }: TFormProps) => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
