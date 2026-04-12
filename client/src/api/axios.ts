@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { ROUTES } from '../constants/routes'
 
-const api = axios.create({
+export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
@@ -18,7 +18,8 @@ api.interceptors.response.use(
                 await api.post(ROUTES.REFRESH_TOKEN);
                 return api(originalRequest);
             } catch (refreshError) {
-                window.location.href = '/login';
+                localStorage.removeItem('is_logged_in');
+                window.location.href = '/';
                 return Promise.reject(refreshError);
             }
         }

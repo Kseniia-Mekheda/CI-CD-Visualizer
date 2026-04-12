@@ -1,11 +1,10 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from app.db.database import get_db
 from app.models.user import User
-from app.schemas.user import UserCreate, UserResponse, Token, TokenRefreshRequest
+from app.schemas.user import UserCreate, UserResponse, Token, TokenRefreshRequest, UserLogin
 from app.core.security import get_password_hash, verify_password, create_access_token, create_refresh_token
 from app.core.config import settings
 from app.api.deps import get_current_user
@@ -26,15 +25,14 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.post("/login", response_model=Token)
-def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == form_data.username).first()
+@router.post("/login")
+def login(response: Response, user_credentials: UserLogin, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == user_credentials.email).first()
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not verify_password(user_credentials.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Неправильні email або пароль",
-            headers={"WWW-Authenticate": "Bearer"},
         )
     
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
@@ -51,7 +49,7 @@ def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), 
         value=access_token,
         httponly=True,
         secure=True,
-        same_site="lax",
+        samesite="lax",
         max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
 
@@ -60,7 +58,7 @@ def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), 
         value=refresh_token,
         httponly=True,
         secure=True,
-        same_site="lax",
+        samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
 
@@ -107,7 +105,7 @@ def get_refresh_token(request: Request, response: Response, db: Session = Depend
         value=refresh_token,
         httponly=True,
         secure=True,
-        same_site="lax",
+        samesite="lax",
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
 
