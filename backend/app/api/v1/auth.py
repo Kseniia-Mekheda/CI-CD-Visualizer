@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
@@ -16,7 +16,7 @@ router = APIRouter()
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already registered")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Користувач з таким email вже зареєстрований")
     
     hashed_password = get_password_hash(user.password)
     new_user = User(email=user.email, hashed_password=hashed_password)
@@ -27,13 +27,13 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 @router.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == form_data.username).first()
 
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
+            detail="Неправильні email або пароль",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
@@ -46,28 +46,44 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
         data={"sub": user.email}, expires_delta=refresh_token_expires
     )
 
-    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
-
-@router.post("/refresh-token", response_model=Token)
-def get_refresh_token(body: TokenRefreshRequest, db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        same_site="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
 
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        same_site="lax",
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+    )
+
+    return {"message": "Успішний вхід", "user": {"email": user.email, "id": user.id}}
+
+@router.post("/refresh-token", response_model=Token)
+def get_refresh_token(request: Request, response: Response, db: Session = Depends(get_db)):
+    token = request.cookies.get("refresh_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Не вдалося отримати refresh_token")
+
     try:
-        payload = jwt.decode(body.refresh_token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str = payload.get("sub")
 
-        if email is None:
-            raise credentials_exception
+        if not email:
+            raise HTTPException(status_code=401, detail="Невалідний refresh_token")
     except JWTError:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail="Невалідний refresh_token")
     
     user = db.query(User).filter(User.email == email).first()
     if user is None:
-        raise credentials_exception
+        raise HTTPException(status_code=401, detail="Користувача не знайдено")
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -78,7 +94,30 @@ def get_refresh_token(body: TokenRefreshRequest, db: Session = Depends(get_db)):
         data={"sub": user.email}, expires_delta=refresh_token_expires
     )
 
-    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=True,
+        same_site="lax",
+        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+    )
+
+    return {"message": "Токени оновлено"}
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="refresh_token")
+    return {"message": "Успішний вихід"}
 
 @router.get("/me", response_model=UserResponse)
 def get_current_user(current_user: User = Depends(get_current_user)):
