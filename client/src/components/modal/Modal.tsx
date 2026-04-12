@@ -1,26 +1,28 @@
 import { X } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 interface ModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    title?: string;
-    children?: React.ReactNode;
-};
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: ReactNode;
+}
 
-const Modal = ({isOpen, onClose, title, children}: ModalProps) => {
-    if (!isOpen) return null;
+export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  if (!isOpen) return null;
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-                <button className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition" onClick={onClose}>
-                    <X size={24}/>
-                </button>
-                {title && <h2 className="mb-6 text-2xl font-bold text-slate-800">{title}</h2>}
-                {children}
-            </div>
-        </div>
-    )
-};
-
-export default Modal;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-light-text/60 p-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-md rounded-2xl bg-light-bg p-8 shadow-modal animate-in fade-in zoom-in duration-200">
+        <button 
+          onClick={onClose}
+          className="absolute right-5 top-5 text-light-text-muted hover:text-light-text transition-colors"
+        >
+          <X size={20} />
+        </button>
+        <h2 className="mb-6 text-2xl font-bold text-light-text">{title}</h2>
+        {children}
+      </div>
+    </div>
+  );
+}

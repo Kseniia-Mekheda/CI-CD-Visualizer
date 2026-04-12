@@ -34,9 +34,14 @@ def login(response: Response, user_credentials: UserLogin, db: Session = Depends
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Неправильні email або пароль",
         )
-    
+
+    if user_credentials.remember_me:
+        refresh_max_age = 30 * 24 * 60 * 60
+    else:
+        refresh_max_age = settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    refresh_token_expires = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    refresh_token_expires = timedelta(seconds=refresh_max_age)
     access_token = create_access_token(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
@@ -59,7 +64,7 @@ def login(response: Response, user_credentials: UserLogin, db: Session = Depends
         httponly=True,
         secure=True,
         samesite="lax",
-        max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+        max_age=refresh_max_age
     )
 
     return {"message": "Успішний вхід", "user": {"email": user.email, "id": user.id}}

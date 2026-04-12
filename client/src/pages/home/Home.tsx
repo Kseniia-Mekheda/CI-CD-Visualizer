@@ -7,7 +7,6 @@ import RegisterForm from '../../components/auth/RegisterForm';
 
 export default function Home() {
   const { user, logout } = useAuthStore();
-  // Стан модалок тепер живе на рівні сторінки, де вони використовуються
   const [activeModal, setActiveModal] = useState<'login' | 'register' | null>(null);
 
   return (
@@ -32,13 +31,13 @@ export default function Home() {
                   onClick={() => setActiveModal('login')} 
                   className="text-sm font-bold text-slate-600 hover:text-purple-600 transition-colors"
                 >
-                  УВІЙТИ
+                  Увійти
                 </button>
                 <button 
                   onClick={() => setActiveModal('register')} 
                   className="rounded-xl bg-purple-600 px-5 py-2 text-sm font-bold text-white shadow-lg shadow-purple-200 hover:bg-purple-700 transition-colors"
                 >
-                  ПОЧАТИ
+                  Зареєструватися
                 </button>
               </>
             )}
@@ -66,7 +65,6 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Модалки рендеряться поверх сторінки */}
       <Modal 
         isOpen={activeModal === 'login'} 
         onClose={() => setActiveModal(null)} 
@@ -74,7 +72,7 @@ export default function Home() {
       >
         <LoginForm 
           onSuccess={() => setActiveModal(null)} 
-          onSwitchToRegister={() => setActiveModal('register')} 
+          onSwitch={() => setActiveModal('register')} 
         />
       </Modal>
 
@@ -84,8 +82,7 @@ export default function Home() {
         title="Реєстрація"
       >
         <RegisterForm 
-          onSuccess={() => setActiveModal(null)} 
-          onSwitchToLogin={() => setActiveModal('login')} 
+          onSwitch={() => setActiveModal('login')} 
         />
       </Modal>
     </>

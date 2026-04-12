@@ -1,150 +1,108 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { useState, type ReactElement } from 'react';
 import { api } from '../../api/axios';
 import { ROUTES } from '../../constants/routes';
+import { Eye, EyeOff, CheckCircle } from 'lucide-react';
 
-interface RegisterFormProps {
-  onSuccess: () => void;
-  onSwitchToLogin: () => void;
-}
+type TFormProps = {
+    onSwitch: () => void;
+};
 
-const inputClass =
-  'peer h-14 w-full rounded-md border border-slate-300 bg-white px-3 pb-2.5 pt-5 text-slate-900 outline-none transition placeholder:text-transparent focus:border-sky-400 focus:ring-1 focus:ring-sky-400';
-
-const labelClass =
-  'pointer-events-none absolute left-3 top-1/2 z-[1] -translate-y-1/2 bg-white px-1 text-slate-500 transition-all peer-focus:top-3 peer-focus:-translate-y-0 peer-focus:text-xs peer-[:not(:placeholder-shown)]:top-3 peer-[:not(:placeholder-shown)]:-translate-y-0 peer-[:not(:placeholder-shown)]:text-xs';
-
-const RegisterForm = ({ onSuccess, onSwitchToLogin }: RegisterFormProps) => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+const RegisterForm = ({ onSwitch }: TFormProps) => {
+  const { register, handleSubmit, watch, formState: { errors } } = useForm();
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
-  const onSubmit = async (data: { email: string; password: string }) => {
+  const onSubmit = async (data: any) => {
     setError('');
     try {
       await api.post(ROUTES.REGISTER, {
         email: data.email,
         password: data.password,
       });
-      onSwitchToLogin();
-    } catch (err: unknown) {
-      const detail = (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail;
-      setError(detail || 'Помилка при реєстрації');
+      onSwitch();
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Помилка при реєстрації');
     }
   };
 
+  const SocialButton = ({ icon, text }: { icon: ReactElement; text: string; }) => (
+    <button type="button" className="flex w-full items-center justify-center gap-3 rounded-lg border border-light-border bg-light-bg px-4 py-2.5 text-sm font-semibold text-light-text hover:bg-light-hover transition-colors">
+      {icon}
+      {text}
+    </button>
+  );
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5 text-left">
-      <h2 className="text-2xl font-bold tracking-tight text-slate-900 md:text-[26px]">
-        Приєднуйтесь безкоштовно!
-      </h2>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">{error}</div>}
 
-      {error && (
-        <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
-          {error}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-light-text-secondary">Email</label>
+        <input 
+          {...register('email')}
+          className="rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+          placeholder="email@example.com"
+        />
+        {errors.email && <span className="text-xs text-red-500">{errors.email.message as string}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-light-text-secondary">Пароль</label>
+        <div className="relative">
+          <input 
+            type={showPassword ? 'text' : 'password'}
+            {...register('password')}
+            className="w-full rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            placeholder="Мінімум 6 символів"
+          />
+          <button 
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-light-text-muted hover:text-light-text transition-colors"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
         </div>
-      )}
+        {errors.password && <span className="text-xs text-red-500">{errors.password.message as string}</span>}
+      </div>
 
-      <div className="relative">
-        <input
-          id="register-email"
-          type="email"
-          autoComplete="email"
-          placeholder=" "
-          className={inputClass}
-          {...register('email', { required: 'Введіть email' })}
+      <div className="flex flex-col gap-1">
+        <label className="text-sm font-medium text-light-text-secondary">Підтвердіть пароль</label>
+        <input 
+            type='password'
+            {...register('confirm')}
+            className="rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
         />
-        <label htmlFor="register-email" className={labelClass}>
-          Email
-        </label>
-        {errors.email && (
-          <span className="mt-1 block text-xs text-red-500">{errors.email.message as string}</span>
-        )}
+        {errors.confirm && <span className="text-xs text-red-500">{errors.confirm.message as string}</span>}
       </div>
 
-      <div className="relative">
-        <input
-          id="register-password"
-          type={showPassword ? 'text' : 'password'}
-          autoComplete="new-password"
-          placeholder=" "
-          className={`${inputClass} pr-11`}
-          {...register('password', { required: 'Введіть пароль', minLength: 6 })}
+    <button type="submit" className="flex items-center gap-2 rounded-lg bg-accent py-2 px-6 font-semibold text-white hover:bg-accent-dark transition-colors">
+        Зареєструватися
+        <span>→</span>
+    </button>
+
+      <div className="relative flex items-center py-3 mt-2">
+        <div className="flex-grow border-t border-light-border"></div>
+        <span className="flex-shrink px-3 text-xs text-light-text-muted uppercase tracking-wider font-semibold">Або зареєструватися через</span>
+        <div className="flex-grow border-t border-light-border"></div>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <SocialButton 
+            icon={<img src="https://www.google.com/images/branding/product/1x/gsa_android_64dp.png" alt="Google" className="h-5 w-5"/>} 
+            text="Google"
         />
-        <label htmlFor="register-password" className={labelClass}>
-          Пароль
-        </label>
-        <button
-          type="button"
-          tabIndex={-1}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-          onClick={() => setShowPassword((v) => !v)}
-          aria-label={showPassword ? 'Приховати пароль' : 'Показати пароль'}
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
       </div>
 
-      <div className="relative">
-        <input
-          id="register-confirm"
-          type={showConfirm ? 'text' : 'password'}
-          autoComplete="new-password"
-          placeholder=" "
-          className={`${inputClass} pr-11`}
-          {...register('confirm', {
-            validate: (val) => watch('password') === val || 'Паролі не співпадають',
-          })}
-        />
-        <label htmlFor="register-confirm" className={labelClass}>
-          Підтвердіть пароль
-        </label>
-        <button
-          type="button"
-          tabIndex={-1}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-2 text-slate-400 hover:bg-slate-50 hover:text-slate-600"
-          onClick={() => setShowConfirm((v) => !v)}
-          aria-label={showConfirm ? 'Приховати пароль' : 'Показати пароль'}
-        >
-          {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-        {errors.confirm && (
-          <span className="mt-1 block text-xs text-red-500">{errors.confirm.message as string}</span>
-        )}
-      </div>
-
-      <button
-        type="submit"
-        className="mt-1 w-full rounded-md bg-slate-800 py-3 text-sm font-semibold text-white shadow-md shadow-slate-900/10 transition hover:bg-slate-900"
-      >
-        Створити акаунт
-      </button>
-
-      <div className="flex items-center gap-3 py-1">
-        <span className="h-px flex-1 bg-slate-200" />
-        <span className="shrink-0 text-xs text-slate-400">або продовжити</span>
-        <span className="h-px flex-1 bg-slate-200" />
-      </div>
-
-      <p className="text-center text-sm text-slate-500">
-        Вже є акаунт?{' '}
-        <button
-          type="button"
-          onClick={onSwitchToLogin}
-          className="font-bold text-slate-900 underline-offset-2 hover:underline"
-        >
+      <p className="text-center text-sm text-light-text-secondary mt-2">
+        Вже маєте акаунт?{' '}
+        <button type="button" onClick={onSwitch} className="font-bold text-accent hover:underline">
           Увійти
         </button>
       </p>
     </form>
   );
-};
+}
 
 export default RegisterForm;
