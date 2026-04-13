@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.api.v1.auth import router as auth_router
 from app.api.v1.parser import router as parser_router
+from app.api.v1.ai import router as ai_router
 
 def get_application() -> FastAPI:
     application = FastAPI()
@@ -17,6 +18,7 @@ def get_application() -> FastAPI:
 
     application.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
     application.include_router(parser_router, prefix="/api/v1/parser", tags=["Parser"])
+    application.include_router(ai_router, prefix="/api/v1/ai", tags=["AI"])
     return application
 
 app = get_application()

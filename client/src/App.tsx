@@ -1,25 +1,30 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import Home from './pages/home/Home';
 import './App.css'
+import Dashboard from './pages/dashboard/Dashboard';
 
 function App() {
-  const { checkAuth, isLoading } = useAuthStore();
+  const { checkAuth, isLoading, user } = useAuthStore();
 
-  // Перевірка сесії при старті додатку
   useEffect(() => {
     checkAuth();
   }, []);
 
-  // Поки перевіряємо куки, нічого не рендеримо (або можна показати спінер)
   if (isLoading) return null;
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* В майбутньому тут з'являться /history або /settings */}
-        <Route path="/" element={<Home />} />
+        <Route
+          path="/"
+          element={user ? <Navigate to="/dashboard" replace /> : <Home />}
+        />
+        <Route
+          path="/dashboard"
+          element={user ? <Dashboard /> : <Navigate to="/" replace />}
+        />
       </Routes>
     </BrowserRouter>
   );

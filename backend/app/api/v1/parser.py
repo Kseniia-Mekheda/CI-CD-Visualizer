@@ -6,7 +6,7 @@ import json
 from app.db.database import get_db
 from app.models.user import User
 from app.models.configuration import Configuration
-from app.api.deps import get_optional_current_user
+from app.api.deps import get_optional_current_user, get_current_user
 from app.services.graph_builder import generate_graph
 
 router = APIRouter()
@@ -59,3 +59,23 @@ async def upload_and_parse(
         "saved": bool(saved_config_id),
     }
         
+@router.get("/history")
+def get_user_history(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    configurations = (
+        db.query(Configuration)
+        .filter(Configuration.user_id == current_user.id)
+        .order_by(Configuration.created_at.desc())
+        .all()
+    )
+
+    return [
+        {
+            "id": config.id,
+            "name": config.name,
+            "created_at": config.created_at.isoformat(),
+            "analysis_result": config.analysis_result,
+        } for config in configurations
+    ]

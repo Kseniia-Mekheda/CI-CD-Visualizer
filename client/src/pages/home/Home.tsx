@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
-import { Upload, LogOut } from 'lucide-react';
+import { LogOut, ArrowLeft } from 'lucide-react';
 import Modal from '../../components/modal/Modal';
 import LoginForm from '../../components/auth/LoginForm';
 import RegisterForm from '../../components/auth/RegisterForm';
+import UploadFile from '../../components/upload-file/UploadFile';
+import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
+import { useGraphStore } from '../../store/graphStore';
+import JobSidebar from '../../components/job-sidebar/JobSidebar';
 
 export default function Home() {
   const { user, logout } = useAuthStore();
   const [activeModal, setActiveModal] = useState<'login' | 'register' | null>(null);
+  const { nodes, clearGraph } = useGraphStore();
 
   return (
     <>
@@ -44,24 +49,42 @@ export default function Home() {
           </div>
         </nav>
 
-        <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
-          <div className="max-w-3xl text-center">
-            <h1 className="mb-6 text-5xl font-extrabold text-slate-900 leading-tight">
-              Перетворіть ваші YAML у зрозумілі графи
-            </h1>
-            <p className="mb-10 text-lg text-slate-500">
-              Завантажуйте конфігурації GitHub Actions та візуалізуйте залежності між Jobs та Steps в реальному часі.
-            </p>
-            
-            <div className="group relative flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-slate-300 bg-white p-12 transition-all hover:border-purple-400 hover:bg-purple-50/30">
-              <div className="mb-4 rounded-full bg-purple-100 p-4 text-purple-600 group-hover:scale-110 transition-transform">
-                <Upload size={32} />
+        <main className="flex-1 flex flex-col w-full relative">
+          {nodes.length > 0 ? (
+            <div className="absolute inset-0 flex flex-col">
+              <div className="h-12 border-b border-light-border bg-white flex items-center px-4 justify-between z-10 shadow-sm">
+                 <button 
+                   onClick={clearGraph}
+                   className="flex items-center gap-2 text-sm font-medium text-light-text-secondary hover:text-accent transition-colors"
+                 >
+                   <ArrowLeft size={16} /> Завантажити інший файл
+                 </button>
+                 {!user && (
+                    <span className="text-xs text-light-text-muted">
+                      Увійдіть, щоб зберігати історію конфігурацій
+                    </span>
+                 )}
               </div>
-              <p className="mb-2 font-bold text-slate-700">Перетягніть файл сюди або натисніть</p>
-              <p className="text-sm text-slate-400">Підтримуються .yaml та .yml</p>
-              <input type="file" className="absolute inset-0 cursor-pointer opacity-0" />
+              
+              <div className="flex-1 w-full relative">
+                <GraphVisualizer />
+                <JobSidebar />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+              <div className="max-w-3xl text-center">
+                <h1 className="mb-6 text-5xl font-extrabold text-light-text leading-tight">
+                  Перетворіть ваші YAML у зрозумілі графи
+                </h1>
+                <p className="mb-10 text-lg text-light-text-secondary">
+                  Завантажуйте конфігурації GitHub Actions та візуалізуйте залежності між Jobs та Steps в реальному часі.
+                </p>
+                
+                <UploadFile />
+              </div>
+            </div>
+          )}
         </main>
       </div>
 
