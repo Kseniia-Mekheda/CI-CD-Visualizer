@@ -6,11 +6,12 @@ import { api } from '../../api/axios';
 import { ROUTES } from '../../constants/routes';
 import { useAuthStore } from '../../store/authStore';
 import { Eye, EyeOff } from 'lucide-react'; 
+import LoginWithButton from '../login-with-button/LoginWithButton';
 
 type TFormProps = {
     onSuccess: () => void;
     onSwitch: () => void;
-}
+};
 
 const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
   const { register, handleSubmit, formState: { errors } } = useForm({
@@ -35,12 +36,9 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
     }
   };
 
-  const SocialButton = ({ icon, text }: { icon: ReactElement; text: string; }) => (
-    <button type="button" className="flex w-full items-center justify-center gap-3 rounded-lg border border-light-border bg-light-bg px-4 py-2.5 text-sm font-semibold text-light-text hover:bg-light-hover transition-colors">
-      {icon}
-      {text}
-    </button>
-  );
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}${ROUTES.GOOGLE_LOGIN}`;
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -50,7 +48,7 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
         <label className="text-sm font-medium text-light-text-secondary">Email</label>
         <input 
           {...register('email')}
-          className="rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+          className={`input-field ${errors.email ? 'input-field--error' : ''}`}
           placeholder="email@example.com"
         />
         {errors.email && <span className="text-xs text-red-500">{errors.email.message}</span>}
@@ -62,7 +60,7 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
           <input 
             type={showPassword ? 'text' : 'password'}
             {...register('password')}
-            className="w-full rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            className={`input-field ${errors.password ? 'input-field--error' : ''}`}
           />
           <button 
             type="button"
@@ -95,7 +93,8 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <SocialButton 
+        <LoginWithButton 
+            onClick={handleGoogleLogin}
             icon={<img src="https://www.google.com/images/branding/product/1x/gsa_android_64dp.png" alt="Google" className="h-5 w-5"/>} 
             text="Google"
         />

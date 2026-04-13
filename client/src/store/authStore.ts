@@ -20,16 +20,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
 
   checkAuth: async () => {
-    if (!localStorage.getItem('is_logged_in')) {
-      set({ user: null, isLoading: false });
-      return;
-    }
-
+    set({ isLoading: true });
     try {
       const { data } = await api.get(ROUTES.ME);
       set({ user: data, isLoading: false });
     } catch (error) {
-      localStorage.removeItem('is_logged_in');
       set({ user: null, isLoading: false });
     }
   },
@@ -37,10 +32,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   login: async () => {
     try {
       const { data } = await api.get(ROUTES.ME);
-      localStorage.setItem('is_logged_in', 'true');
       set({ user: data });
     } catch (error) {
       console.error("Не вдалося завантажити профіль після логіну");
+      set({ user: null });
     }
   },
 
@@ -48,7 +43,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await api.post(ROUTES.LOGOUT);
     } finally {
-      localStorage.removeItem('is_logged_in');
       set({ user: null });
       window.location.href = '/';
     }

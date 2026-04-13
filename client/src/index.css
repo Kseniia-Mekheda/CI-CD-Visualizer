@@ -25,3 +25,13 @@
     color: var(--color-light-text);
   }
 }
+
+@layer components {
+  .input-field {
+    @apply w-full rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none transition-all focus:border-accent focus:ring-1 focus:ring-accent;
+  }
+
+  .input-field--error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+  }
+}

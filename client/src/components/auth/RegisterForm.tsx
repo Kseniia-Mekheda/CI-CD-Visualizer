@@ -1,15 +1,20 @@
 import { useForm } from 'react-hook-form';
-import { useState, type ReactElement } from 'react';
+import { useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { registerSchema } from '../../helpers/validation/auth';
 import { api } from '../../api/axios';
 import { ROUTES } from '../../constants/routes';
 import { Eye, EyeOff } from 'lucide-react';
+import LoginWithButton from '../login-with-button/LoginWithButton';
 
 type TFormProps = {
     onSwitch: () => void;
 };
 
 const RegisterForm = ({ onSwitch }: TFormProps) => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(registerSchema),
+  });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,12 +31,9 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
     }
   };
 
-  const SocialButton = ({ icon, text }: { icon: ReactElement; text: string; }) => (
-    <button type="button" className="flex w-full items-center justify-center gap-3 rounded-lg border border-light-border bg-light-bg px-4 py-2.5 text-sm font-semibold text-light-text hover:bg-light-hover transition-colors">
-      {icon}
-      {text}
-    </button>
-  );
+  const handleGoogleLogin = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}${ROUTES.GOOGLE_LOGIN}`;
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -41,7 +43,7 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
         <label className="text-sm font-medium text-light-text-secondary">Email</label>
         <input 
           {...register('email')}
-          className="rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+          className={`input-field ${errors.email ? 'input-field--error' : ''}`}
           placeholder="email@example.com"
         />
         {errors.email && <span className="text-xs text-red-500">{errors.email.message as string}</span>}
@@ -53,7 +55,7 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
           <input 
             type={showPassword ? 'text' : 'password'}
             {...register('password')}
-            className="w-full rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            className={`input-field ${errors.password ? 'input-field--error' : ''}`}
             placeholder="Мінімум 6 символів"
           />
           <button 
@@ -72,7 +74,7 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
         <input 
             type='password'
             {...register('confirm')}
-            className="rounded-lg border border-light-border bg-light-panel p-2.5 text-sm outline-none focus:border-accent focus:ring-1 focus:ring-accent transition-all"
+            className={`input-field ${errors.confirm ? 'input-field--error' : ''}`}
         />
         {errors.confirm && <span className="text-xs text-red-500">{errors.confirm.message as string}</span>}
       </div>
@@ -89,7 +91,8 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
       </div>
 
       <div className="flex items-center gap-3">
-        <SocialButton 
+        <LoginWithButton 
+            onClick={handleGoogleLogin}
             icon={<img src="https://www.google.com/images/branding/product/1x/gsa_android_64dp.png" alt="Google" className="h-5 w-5"/>} 
             text="Google"
         />

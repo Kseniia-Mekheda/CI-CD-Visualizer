@@ -1,29 +1,29 @@
 import axios from 'axios'
-import { ROUTES } from '../constants/routes'
+// import { ROUTES } from '../constants/routes'
 
 export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true,
 });
 
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        const originalRequest = error.config;
+// api.interceptors.response.use(
+//     (response) => response,
+//     async (error) => {
+//         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
+//         if (error.response?.status === 401 && !originalRequest._retry) {
+//             originalRequest._retry = true;
 
-            try {
-                await api.post(ROUTES.REFRESH_TOKEN);
-                return api(originalRequest);
-            } catch (refreshError) {
-                localStorage.removeItem('is_logged_in');
-                window.location.href = '/';
-                return Promise.reject(refreshError);
-            }
-        }
+//             try {
+//                 await api.post(ROUTES.REFRESH_TOKEN);
+//                 return api(originalRequest);
+//             } catch (refreshError) {
+//                 localStorage.removeItem('is_logged_in');
+//                 window.location.href = '/';
+//                 return Promise.reject(refreshError);
+//             }
+//         }
 
-        return Promise.reject(error);
-    }
-);
+//         return Promise.reject(error);
+//     }
+// );
