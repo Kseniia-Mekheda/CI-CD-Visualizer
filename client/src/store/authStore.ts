@@ -10,8 +10,8 @@ interface User {
 interface AuthState {
   user: User | null;
   isLoading: boolean;
-  checkAuth: () => Promise<void>; 
-  login: () => Promise<void>;     
+  checkAuth: () => Promise<void>;
+  login: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -34,7 +34,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       const { data } = await api.get(ROUTES.ME);
       set({ user: data });
     } catch (error) {
-      console.error("Не вдалося завантажити профіль після логіну");
+      console.error('Не вдалося завантажити профіль після логіну');
       set({ user: null });
     }
   },

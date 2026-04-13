@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --color-accent: #8b5cf6;
@@ -7,11 +7,11 @@
 
   --color-light-bg: #ffffff;
   --color-light-panel: #f8fafc;
-  
+
   --color-light-text: #0f172a;
   --color-light-text-secondary: #475569;
   --color-light-text-muted: #94a3b8;
-  
+
   --color-light-border: #e2e8f0;
   --color-light-hover: #f1f5f9;
 

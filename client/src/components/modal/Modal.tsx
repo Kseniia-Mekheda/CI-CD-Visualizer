@@ -8,13 +8,18 @@ interface ModalProps {
   children: ReactNode;
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
+export default function Modal({
+  isOpen,
+  onClose,
+  title,
+  children,
+}: ModalProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-light-text/60 p-4 backdrop-blur-sm">
       <div className="relative w-full max-w-md rounded-2xl bg-light-bg p-8 shadow-modal animate-in fade-in zoom-in duration-200">
-        <button 
+        <button
           onClick={onClose}
           className="absolute right-5 top-5 text-light-text-muted hover:text-light-text transition-colors"
         >

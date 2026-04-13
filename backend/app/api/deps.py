@@ -1,11 +1,12 @@
-from fastapi import Request, Depends, HTTPException, status
-from jose import jwt, JWTError
-from sqlalchemy.orm import Session
-from typing import Optional
 
+from fastapi import Depends, HTTPException, Request, status
+from jose import JWTError, jwt
+from sqlalchemy.orm import Session
+
+from app.core.config import settings
 from app.db.database import get_db
 from app.models.user import User
-from app.core.config import settings
+
 
 def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
     token = request.cookies.get("access_token")
@@ -30,7 +31,7 @@ def get_current_user(request: Request, db: Session = Depends(get_db)) -> User:
 def get_optional_current_user(
     request: Request,
     db: Session = Depends(get_db)
-) -> Optional[User]:
+) -> User | None:
     token = request.cookies.get("access_token")
     if not token:
         return None

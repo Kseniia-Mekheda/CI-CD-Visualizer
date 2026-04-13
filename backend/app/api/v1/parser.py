@@ -1,12 +1,13 @@
-import yaml
-from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
-from sqlalchemy.orm import Session
 import json
 
+import yaml
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app.api.deps import get_current_user, get_optional_current_user
 from app.db.database import get_db
-from app.models.user import User
 from app.models.configuration import Configuration
-from app.api.deps import get_optional_current_user, get_current_user
+from app.models.user import User
 from app.services.graph_builder import generate_graph
 
 router = APIRouter()
@@ -77,6 +78,6 @@ def get_user_history(
             "name": config.name,
             "created_at": config.created_at.isoformat(),
             "analysis_result": config.analysis_result,
-            "raw_yaml": config.raw_yaml,
+            # "raw_yaml": config.raw_yaml,
         } for config in configurations
     ]

@@ -1,8 +1,15 @@
 import { useMemo, useCallback } from 'react';
-import ReactFlow, { Background, Controls, MiniMap, type Node, type Edge } from 'reactflow';
+import ReactFlow, {
+  Background,
+  Controls,
+  MiniMap,
+  type Node,
+  type Edge,
+} from 'reactflow';
 import 'reactflow/dist/style.css';
 import dagre from 'dagre';
 import { useGraphStore } from '../../store/graphStore';
+import { useAuthStore } from '../../store/authStore';
 import JobNode from '../../components/job-node/JobNode';
 import AiReportPanel from '../ai-report-panel/AiReportPanel';
 
@@ -16,44 +23,52 @@ dagreGraph.setDefaultEdgeLabel(() => ({}));
 const nodeWidth = 220;
 const nodeHeight = 70;
 
-const getLayoutedElements = (nodes: Node[], edges: Edge[], direction = 'LR') => {
-    dagreGraph.setGraph({ rankdir: direction, ranksep: 80, nodesep: 50 });
-    nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-    });
+const getLayoutedElements = (
+  nodes: Node[],
+  edges: Edge[],
+  direction = 'LR',
+) => {
+  dagreGraph.setGraph({ rankdir: direction, ranksep: 80, nodesep: 50 });
+  nodes.forEach((node) => {
+    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+  });
 
-    edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-    });
+  edges.forEach((edge) => {
+    dagreGraph.setEdge(edge.source, edge.target);
+  });
 
-    dagre.layout(dagreGraph);
+  dagre.layout(dagreGraph);
 
-    const layoutedNodes = nodes.map((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        const newNode = {...node};
+  const layoutedNodes = nodes.map((node) => {
+    const nodeWithPosition = dagreGraph.node(node.id);
+    const newNode = { ...node };
 
-        newNode.position = {
-            x: nodeWithPosition.x - nodeWidth / 2,
-            y: nodeWithPosition.y - nodeHeight / 2,
-        };
-        newNode.type = 'customJob';
-        return newNode;
-    });
+    newNode.position = {
+      x: nodeWithPosition.x - nodeWidth / 2,
+      y: nodeWithPosition.y - nodeHeight / 2,
+    };
+    newNode.type = 'customJob';
+    return newNode;
+  });
 
-    return { nodes: layoutedNodes, edges };
+  return { nodes: layoutedNodes, edges };
 };
 
 const GraphVisualizer = () => {
   const { nodes, edges, setSelectedNode } = useGraphStore();
+  const { user } = useAuthStore();
 
   const { nodes: layoutedNodes, edges: layoutedEdges } = useMemo(
     () => getLayoutedElements(nodes, edges, 'LR'),
-    [nodes, edges]
+    [nodes, edges],
   );
 
-  const onNodeClick = useCallback((_: any, node: Node) => {
-    setSelectedNode(node);
-  }, [setSelectedNode]);
+  const onNodeClick = useCallback(
+    (_: any, node: Node) => {
+      setSelectedNode(node);
+    },
+    [setSelectedNode],
+  );
 
   const onPaneClick = useCallback(() => {
     setSelectedNode(null);
@@ -61,7 +76,7 @@ const GraphVisualizer = () => {
 
   return (
     <div className="h-full w-full bg-light-bg">
-      <AiReportPanel />
+      {user && <AiReportPanel />}
       <ReactFlow
         nodes={layoutedNodes}
         edges={layoutedEdges}
@@ -70,7 +85,6 @@ const GraphVisualizer = () => {
         onPaneClick={onPaneClick}
         fitView
         attributionPosition="bottom-right"
-
         nodesDraggable={false}
         nodesConnectable={false}
         edgesUpdatable={false}

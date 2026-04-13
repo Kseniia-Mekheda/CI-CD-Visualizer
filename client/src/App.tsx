@@ -1,8 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import Home from './pages/home/Home';
-import './App.css'
+import './App.css';
 import Dashboard from './pages/dashboard/Dashboard';
 
 function App() {
