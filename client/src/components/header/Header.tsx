@@ -9,9 +9,9 @@ const Header = ({ setActiveModal }: THeaderProps) => {
   const { user, logout } = useAuthStore();
 
   return (
-    <nav className="flex items-center justify-between border-b bg-white px-8 py-4">
+    <nav className="flex items-center justify-between bg-light-panel px-8 py-4 shadow-md">
       <div className="text-2xl font-black text-purple-600 tracking-tight">
-        CI/CD VISUALIZER
+        Pipely
       </div>
         <div className="flex items-center gap-6">
         {user ? (

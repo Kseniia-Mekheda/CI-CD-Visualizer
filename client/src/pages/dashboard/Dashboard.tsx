@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useGraphStore } from '../../store/graphStore';
 import { useAuthStore } from '../../store/authStore';
-import { Plus, FileText, ChevronRight, LogOut } from 'lucide-react';
+import { Plus, FileText, ChevronRight, LogOut, Waypoints } from 'lucide-react';
 import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
 import JobSidebar from '../../components/job-sidebar/JobSidebar';
 import UploadFile from '../../components/upload-file/UploadFile';
@@ -29,10 +29,10 @@ const Dashboard = () => {
         <div className="p-6 border-b border-light-border">
           <div className="flex items-center gap-2 mb-6">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white font-bold">
-              V
+              <Waypoints size={24} />
             </div>
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-dark">
-              Visualizer
+              Pipely
             </span>
           </div>
           <button
