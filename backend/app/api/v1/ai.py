@@ -7,7 +7,7 @@ import google.generativeai as genai
 router = APIRouter()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 @router.post("/analyze-pipeline")
 async def analyze_pipeline(request: AnalyzeRequest):
@@ -32,7 +32,7 @@ async def analyze_pipeline(request: AnalyzeRequest):
         }}
 
         YAML to analyze:
-        {request.yaml_content}
+        {request.yaml_data}
         """
     
     try: 

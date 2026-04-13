@@ -21,6 +21,7 @@ const UploadFile = () => {
         setError('');
         setLoading(true);
         const startedAt = Date.now();
+        const rawYaml = await file.text();
     
         try {
           const formData = new FormData();
@@ -32,7 +33,7 @@ const UploadFile = () => {
             },
           });
     
-          setGraph(data.graph_data.nodes, data.graph_data.edges);
+          setGraph(data.graph_data.nodes, data.graph_data.edges, rawYaml);
         } catch (err: any) {
           setError(err.response?.data?.detail || 'Помилка при обробці файлу');
         } finally {

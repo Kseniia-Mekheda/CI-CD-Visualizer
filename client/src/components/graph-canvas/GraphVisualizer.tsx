@@ -4,6 +4,7 @@ import 'reactflow/dist/style.css';
 import dagre from 'dagre';
 import { useGraphStore } from '../../store/graphStore';
 import JobNode from '../../components/job-node/JobNode';
+import AiReportPanel from '../ai-report-panel/AiReportPanel';
 
 const nodeTypes = {
   customJob: JobNode,
@@ -60,6 +61,7 @@ const GraphVisualizer = () => {
 
   return (
     <div className="h-full w-full bg-light-bg">
+      <AiReportPanel />
       <ReactFlow
         nodes={layoutedNodes}
         edges={layoutedEdges}

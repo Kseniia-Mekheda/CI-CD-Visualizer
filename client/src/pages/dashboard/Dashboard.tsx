@@ -17,7 +17,7 @@ const Dashboard = () => {
     const loadHistoryItem = (item: any) => {
         clearGraph();
         const graph = JSON.parse(item.analysis_result)
-        setGraph(graph.nodes, graph.edges);
+        setGraph(graph.nodes, graph.edges, item.raw_yaml ?? null);
     };
 
     return (

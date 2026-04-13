@@ -13,7 +13,7 @@ interface GraphState {
   selectedNode: Node | null;
   history: any[];
   
-  setGraph: (nodes: Node[], edges: Edge[]) => void;
+  setGraph: (nodes: Node[], edges: Edge[], rawYaml: string | null) => void;
   setLoading: (loading: boolean) => void;
   setSelectedNode: (node: Node | null) => void;
   clearGraph: () => void;
@@ -31,10 +31,10 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   selectedNode: null,
   history: [],
 
-  setGraph: (nodes, edges) => set({ nodes, edges, selectedNode: null }),
+  setGraph: (nodes, edges, rawYaml) => set({ nodes, edges, rawYaml, selectedNode: null, aiReport: null }),
   setLoading: (loading) => set({ isLoading: loading }),
   setSelectedNode: (node) => set({ selectedNode: node }),
-  clearGraph: () => set({ nodes: [], edges: [], selectedNode: null }),
+  clearGraph: () => set({ nodes: [], edges: [], selectedNode: null, rawYaml: null, aiReport: null }),
 
   fetchHistory: async () => {
     try {
@@ -51,7 +51,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
     set({ isAnalyzing: true });
     try {
-      const { data } = await api.post(ROUTES.AI_ANALYZE, { yaml_content: rawYaml });
+      const { data } = await api.post(ROUTES.AI_ANALYZE, { yaml_data: rawYaml });
       set({ aiReport: data });
     } catch (error) {
       console.error("AI Analysis error", error);

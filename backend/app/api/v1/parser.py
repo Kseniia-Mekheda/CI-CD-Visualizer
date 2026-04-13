@@ -77,5 +77,6 @@ def get_user_history(
             "name": config.name,
             "created_at": config.created_at.isoformat(),
             "analysis_result": config.analysis_result,
+            "raw_yaml": config.raw_yaml,
         } for config in configurations
     ]
