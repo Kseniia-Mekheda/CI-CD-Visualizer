@@ -9,6 +9,7 @@ from app.db.database import get_db
 from app.models.configuration import Configuration
 from app.models.user import User
 from app.services.graph_builder import generate_graph
+from app.schemas.config import UpdateConfigRequest
 
 router = APIRouter()
 
@@ -56,6 +57,7 @@ async def upload_and_parse(
         "message": "Файл успішно завантажено та проаналізовано",
         "config_id": saved_config_id,
         "graph_data": graph_data,
+        "raw_yaml": content_str,
         "status": "success",
         "saved": bool(saved_config_id),
     }
@@ -78,6 +80,46 @@ def get_user_history(
             "name": config.name,
             "created_at": config.created_at.isoformat(),
             "analysis_result": config.analysis_result,
-            # "raw_yaml": config.raw_yaml,
+            "raw_yaml": config.raw_yaml,
         } for config in configurations
     ]
+
+@router.put("/update")
+def update_yaml_config(
+    request: UpdateConfigRequest,
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    config = db.query(Configuration).filter(
+        Configuration.id == request.config_id,
+        Configuration.user_id == current_user.id
+    ).first()
+
+    if not config:
+        raise HTTPException(status_code=404, detail="Конфігурацію не знайдено")
+
+    try:
+        yaml_data = yaml.safe_load(request.yaml_content)
+        if not yaml_data:
+            raise ValueError("Файл не може бути порожнім")
+
+        graph_data = generate_graph(yaml_data)
+
+        config.raw_yaml = request.yaml_content
+        config.analysis_result = json.dumps(graph_data)
+        config.ai_report = None
+
+        db.commit()
+
+        return {
+            "message": "Конфігурацію успішно оновлено",
+            "graph_data": graph_data,
+            "raw_yaml": request.yaml_content,
+        }
+
+    except yaml.YAMLError as e:
+        raise HTTPException(status_code=400, detail=f"Синтаксична помилка YAML: {str(e)}")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Внутрішня помилка при оновленні")

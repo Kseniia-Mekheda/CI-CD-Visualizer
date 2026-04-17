@@ -10,7 +10,7 @@ const UploadFile = () => {
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { setGraph, setLoading, isLoading } = useGraphStore();
+  const { setGraph, setLoading, isLoading, fetchHistory } = useGraphStore();
 
   const handleFile = async (file: File) => {
     if (!file.name.endsWith('.yaml') && !file.name.endsWith('.yml')) {
@@ -31,8 +31,9 @@ const UploadFile = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      setGraph(data.graph_data.nodes, data.graph_data.edges, data?.config_id);
+      
+      setGraph(data.graph_data.nodes, data.graph_data.edges, data.config_id, data.raw_yaml ?? null);
+      await fetchHistory();
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Помилка при обробці файлу');
     } finally {

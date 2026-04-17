@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useGraphStore } from '../../store/graphStore';
 import { useAuthStore } from '../../store/authStore';
-import { Plus, FileText, ChevronRight, LogOut, Waypoints } from 'lucide-react';
+import { Plus, FileText, ChevronRight, LogOut, Waypoints, LayoutTemplate, Code2 } from 'lucide-react';
+import CodeEditor from '../../components/code-editor/CodeEditor';
 import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
 import JobSidebar from '../../components/job-sidebar/JobSidebar';
 import UploadFile from '../../components/upload-file/UploadFile';
@@ -11,6 +12,7 @@ const Dashboard = () => {
   const { nodes, history, fetchHistory, clearGraph, setGraph } =
     useGraphStore();
   const [ chosenItemId, setChosenItemId ] = useState<string>('');
+  const [viewMode, setViewMode] = useState<'graph' | 'code'>('graph');
 
   useEffect(() => {
     fetchHistory();
@@ -19,7 +21,7 @@ const Dashboard = () => {
   const loadHistoryItem = (item: any) => {
     clearGraph();
     const graph = JSON.parse(item.analysis_result);
-    setGraph(graph.nodes, graph.edges, item.id ?? null);
+    setGraph(graph.nodes, graph.edges, item.id ?? null, item.raw_yaml ?? null);
     setChosenItemId(item.id);
   };
 
@@ -99,10 +101,36 @@ const Dashboard = () => {
 
       <main className="flex-1 relative flex flex-col bg-white">
         {nodes.length > 0 ? (
-          <div className="flex-1 relative">
-            <GraphVisualizer />
-            <JobSidebar />
+          <div className="flex flex-col h-full relative">
+          <div className="h-14 border-b border-light-border bg-white flex items-center px-4 justify-center shadow-sm z-20 shrink-0">
+             <div className="flex items-center bg-light-panel p-1 rounded-xl border border-light-border">
+               <button
+                 onClick={() => setViewMode('graph')}
+                 className={`flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${viewMode === 'graph' ? 'bg-white shadow-sm text-accent' : 'text-light-text-muted hover:text-light-text'}`}
+               >
+                 <LayoutTemplate size={16} /> Граф
+               </button>
+               <button
+                 onClick={() => setViewMode('code')}
+                 className={`flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${viewMode === 'code' ? 'bg-white shadow-sm text-accent' : 'text-light-text-muted hover:text-light-text'}`}
+               >
+                 <Code2 size={16} /> Код YAML
+               </button>
+             </div>
           </div>
+
+          <div className="flex-1 relative w-full h-full overflow-hidden">
+            {viewMode === 'graph' ? (
+              <>
+                <GraphVisualizer />
+                <JobSidebar />
+              </>
+            ) : (
+              <CodeEditor />
+            )}
+          </div>
+          
+        </div>
         ) : (
           <div className="flex-1 flex items-center justify-center p-8 bg-slate-50/50">
             <div className="w-full max-w-2xl">

@@ -8,4 +8,5 @@ export const ROUTES = {
   UPLOAD_YAML: '/parser/upload-yaml',
   HISTORY: '/parser/history',
   AI_ANALYZE: '/ai/analyze-pipeline',
+  UPDATE_YAML: '/parser/update',
 };
