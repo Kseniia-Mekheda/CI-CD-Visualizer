@@ -36,15 +36,15 @@ const AiReportPanel = () => {
   }
 
   const getSeverityStyle = (severity: string, category: string) => {
-    if (severity === 'High') return 'bg-red-50 text-red-600 border-red-200';
-    if (category === 'Performance')
+    if (severity === 'Висока') return 'bg-red-50 text-red-600 border-red-200';
+    if (category === 'Продуктивність')
       return 'bg-yellow-50 text-yellow-600 border-yellow-200';
     return 'bg-green-50 text-green-600 border-green-200';
   };
 
   const getIcon = (category: string) => {
-    if (category === 'Security') return <ShieldAlert size={16} />;
-    if (category === 'Performance') return <Zap size={16} />;
+    if (category === 'Безпека') return <ShieldAlert size={16} />;
+    if (category === 'Продуктивність') return <Zap size={16} />;
     return <CheckCircle size={16} />;
   };
 
@@ -54,7 +54,7 @@ const AiReportPanel = () => {
         <Sparkles className="shrink-0 text-purple-600" size={18} />
         <div className="min-w-0 pr-1">
           <p className="text-xs font-bold text-light-text leading-tight">
-            AI Report
+            AI аудит
           </p>
           <p
             className={`text-[11px] font-semibold tabular-nums ${aiReport.score > 80 ? 'text-green-600' : 'text-amber-600'}`}
@@ -81,7 +81,7 @@ const AiReportPanel = () => {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Sparkles className="text-purple-600 shrink-0" size={20} />
-            <h3 className="font-bold text-light-text text-lg">AI Report</h3>
+            <h3 className="font-bold text-light-text text-lg">AI аудит</h3>
           </div>
           <p className="text-xs text-light-text-secondary mt-1">
             {aiReport.summary}
@@ -90,7 +90,7 @@ const AiReportPanel = () => {
         <div className="flex shrink-0 items-start gap-1">
           <div className="flex flex-col items-end pl-1">
             <span className="text-[10px] uppercase font-bold text-light-text-muted">
-              Health Score
+              Індекс здоров'я
             </span>
             <span
               className={`text-2xl font-black ${aiReport.score > 80 ? 'text-green-500' : 'text-yellow-500'}`}
