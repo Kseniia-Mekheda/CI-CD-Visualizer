@@ -2,7 +2,7 @@ import { LogOut } from "lucide-react";
 import { useAuthStore } from "../../store/authStore";
 
 type THeaderProps = {
-  setActiveModal: React.Dispatch<React.SetStateAction<"login" | "register">>
+  setActiveModal: React.Dispatch<React.SetStateAction<"login" | "register" | null>>
 }
 
 const Header = ({ setActiveModal }: THeaderProps) => {
