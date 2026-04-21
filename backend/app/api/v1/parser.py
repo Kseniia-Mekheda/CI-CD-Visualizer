@@ -20,24 +20,24 @@ async def upload_and_parse(
     db: Session = Depends(get_db),
 ):
     if not file.filename.endswith((".yaml", ".yml")):
-        raise HTTPException(status_code=400, detail="Дозволені лише файли .yaml або .yml")
+        raise HTTPException(status_code=400, detail="ONLY_YAML_AND_YML_FILES_ALLOWED")
     
     try: 
         content = await file.read()
         content_str = content.decode("utf-8")
         yaml_data = yaml.safe_load(content_str)
     except yaml.YAMLError as e:
-        raise HTTPException(status_code=400, detail=f"Помилка парсингу YAML: {str(e)}")
+        raise HTTPException(status_code=400, detail="YAML_PARSING_ERROR")
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Помилка при обробці файлу: {str(e)}")
+        raise HTTPException(status_code=400, detail="FILE_PROCESSING_ERROR")
     
     if not yaml_data:
-        raise HTTPException(status_code=400, detail="Не вдалося прочитати YAML файл")
+        raise HTTPException(status_code=400, detail="COULD_NOT_READ_YAML_FILE")
     
     try:
         graph_data = generate_graph(yaml_data)
     except ValueError as e:
-        raise HTTPException(status_code=422, detail=str(e))
+        raise HTTPException(status_code=422, detail="GRAPH_GENERATION_ERROR")
     
     saved_config_id = None
     if current_user:
@@ -54,7 +54,7 @@ async def upload_and_parse(
         saved_config_id = new_config.id
     
     return {
-        "message": "Файл успішно завантажено та проаналізовано",
+        "message": "FILE_UPLOADED_AND_PARSED_SUCCESSFULLY",
         "config_id": saved_config_id,
         "graph_data": graph_data,
         "raw_yaml": content_str,
@@ -96,12 +96,12 @@ def update_yaml_config(
     ).first()
 
     if not config:
-        raise HTTPException(status_code=404, detail="Конфігурацію не знайдено")
+        raise HTTPException(status_code=404, detail="CONFIGURATION_NOT_FOUND")
 
     try:
         yaml_data = yaml.safe_load(request.yaml_content)
         if not yaml_data:
-            raise ValueError("Файл не може бути порожнім")
+            raise ValueError("FILE_CANNOT_BE_EMPTY")
 
         graph_data = generate_graph(yaml_data)
 
@@ -112,14 +112,14 @@ def update_yaml_config(
         db.commit()
 
         return {
-            "message": "Конфігурацію успішно оновлено",
+            "message": "CONFIGURATION_UPDATED_SUCCESSFULLY",
             "graph_data": graph_data,
             "raw_yaml": request.yaml_content,
         }
 
     except yaml.YAMLError as e:
-        raise HTTPException(status_code=400, detail=f"Синтаксична помилка YAML: {str(e)}")
+        raise HTTPException(status_code=400, detail="YAML_SYNTAX_ERROR")
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail="INTERNAL_ERROR")
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Внутрішня помилка при оновленні")
+        raise HTTPException(status_code=500, detail="INTERNAL_ERROR")

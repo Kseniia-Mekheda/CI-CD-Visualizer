@@ -32,7 +32,7 @@ async def analyze_pipeline(
     ).first()
 
     if not config:
-        raise HTTPException(status_code=404, detail="Конфігурацію не знайдено")
+        raise HTTPException(status_code=404, detail="CONFIGURATION_NOT_FOUND")
 
     if config.ai_report:
         return json.loads(config.ai_report)
@@ -64,4 +64,4 @@ async def analyze_pipeline(
         return result
     except Exception as e:
         print(f"AI Error: {e}")
-        raise HTTPException(status_code=500, detail=f"Помилка при аналізі пайплайну: {str(e)}")
+        raise HTTPException(status_code=500, detail="AI_ANALYSIS_ERROR")

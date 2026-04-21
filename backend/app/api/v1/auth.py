@@ -29,7 +29,7 @@ router = APIRouter()
 def register(user: UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(User).filter(User.email == user.email).first()
     if db_user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Користувач з таким email вже зареєстрований")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="USER_ALREADY_EXISTS")
     
     hashed_password = get_password_hash(user.password)
     new_user = User(email=user.email, hashed_password=hashed_password)
@@ -46,7 +46,7 @@ def login(response: Response, user_credentials: UserLogin, db: Session = Depends
     if not user or not verify_password(user_credentials.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неправильні email або пароль",
+            detail="INVALID_CREDENTIALS",
         )
 
     if user_credentials.remember_me:
@@ -81,7 +81,7 @@ def login(response: Response, user_credentials: UserLogin, db: Session = Depends
         max_age=refresh_max_age
     )
 
-    return {"message": "Успішний вхід", "user": {"email": user.email, "id": user.id}}
+    return {"message": "SUCCESSFUL_LOGIN", "user": {"email": user.email, "id": user.id}}
 
 @router.get("/google/login")
 def google_login():
@@ -122,7 +122,7 @@ async def google_callback(code: str, response: Response, db: Session = Depends(g
     
     email = user_info.get("email")
     if not email:
-        raise HTTPException(status_code=400, detail="Google account has no email")
+        raise HTTPException(status_code=400, detail="GOOGLE_ACCOUNT_NO_EMAIL")
 
     user = db.query(User).filter(User.email == email).first()
     if not user:
@@ -151,20 +151,20 @@ async def google_callback(code: str, response: Response, db: Session = Depends(g
 def get_refresh_token(request: Request, response: Response, db: Session = Depends(get_db)):
     token = request.cookies.get("refresh_token")
     if not token:
-        raise HTTPException(status_code=401, detail="Не вдалося отримати refresh_token")
+        raise HTTPException(status_code=401, detail="COULD_NOT_GET_REFRESH_TOKEN")
 
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         email: str = payload.get("sub")
 
         if not email:
-            raise HTTPException(status_code=401, detail="Невалідний refresh_token")
+            raise HTTPException(status_code=401, detail="INVALID_REFRESH_TOKEN")
     except JWTError:
-        raise HTTPException(status_code=401, detail="Невалідний refresh_token")
+        raise HTTPException(status_code=401, detail="INVALID_REFRESH_TOKEN")
     
     user = db.query(User).filter(User.email == email).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="Користувача не знайдено")
+        raise HTTPException(status_code=401, detail="USER_NOT_FOUND")
 
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -192,13 +192,13 @@ def get_refresh_token(request: Request, response: Response, db: Session = Depend
         max_age=settings.REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
     )
 
-    return {"message": "Токени оновлено"}
+    return {"message": "TOKENS_UPDATED_SUCCESSFULLY"}
 
 @router.post("/logout")
 def logout(response: Response):
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
-    return {"message": "Успішний вихід"}
+    return {"message": "LOGOUT_SUCCESSFULLY"}
 
 @router.get("/me", response_model=UserResponse)
 def get_current_user(current_user: User = Depends(get_current_user)):
