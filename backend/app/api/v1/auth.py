@@ -134,7 +134,7 @@ async def google_callback(code: str, response: Response, db: Session = Depends(g
     access_token = create_access_token(data={"sub": user.email, "type": "access"})
     refresh_token = create_refresh_token(data={"sub": user.email, "type": "refresh"})
 
-    response = RedirectResponse(url="http://localhost:5173/")
+    response = RedirectResponse(url="http://localhost:3000/")
     
     response.set_cookie(
         key="access_token", value=access_token, httponly=True, samesite="lax",
