@@ -7,18 +7,19 @@ interface GraphState {
   nodes: Node[];
   edges: Edge[];
   rawYaml: string | null;
-  currentConfigId: number | null;
+  currentConfigId: string | null;
   isLoading: boolean;
   isAnalyzing: boolean;
   aiReport: any | null;
   selectedNode: Node | null;
-  history: any[];
+  history: Array<{ id: string; name: string; created_at: string }>;
 
-  setGraph: (nodes: Node[], edges: Edge[], configId?: number | null, rawYaml?: string | null) => void;
+  setGraph: (nodes: Node[], edges: Edge[], configId?: string | null, rawYaml?: string | null) => void;
   setLoading: (loading: boolean) => void;
   setSelectedNode: (node: Node | null) => void;
   clearGraph: () => void;
   fetchHistory: () => Promise<void>;
+  loadHistoryItem: (configId: string) => Promise<void>;
   analyzePipeline: () => Promise<void>;
   updateYamlContent: (newYaml: string) => Promise<void>;
   downloadYaml: () => void;
@@ -62,6 +63,26 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       set({ history: data });
     } catch (error) {
       console.error('Помилка завантаження історії', error);
+    }
+  },
+
+  loadHistoryItem: async (configId: string) => {
+    set({ isLoading: true });
+    try {
+      const { data } = await api.get(ROUTES.HISTORY_BY_ID(configId));
+      const graph = JSON.parse(data.analysis_result || '{}');
+      set({
+        nodes: graph.nodes || [],
+        edges: graph.edges || [],
+        currentConfigId: data.id ?? null,
+        selectedNode: null,
+        rawYaml: data.raw_yaml ?? null,
+        aiReport: null,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Помилка завантаження конфігурації', error);
+      set({ isLoading: false });
     }
   },
 

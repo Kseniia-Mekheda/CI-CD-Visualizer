@@ -1,4 +1,6 @@
 
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 
@@ -15,4 +17,4 @@ class AIReport(BaseModel):
     findings: list[Finding] = Field(description="Список проблем і покращень за категоріями Безпека, Продуктивність, Найкращі практики.")
 
 class AnalyzeRequest(BaseModel):
-    config_id: int
+    config_id: UUID

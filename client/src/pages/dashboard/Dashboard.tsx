@@ -12,20 +12,18 @@ import LanguageToggle from '../../components/lang-toggle/langToggle';
 const Dashboard = () => {
   const { user, logout } = useAuthStore();
   const { t } = useTranslation();
-  const { nodes, history, fetchHistory, clearGraph, setGraph } =
+  const { nodes, history, fetchHistory, clearGraph, loadHistoryItem } =
     useGraphStore();
-  const [ chosenItemId, setChosenItemId ] = useState<string>('');
+  const [chosenItemId, setChosenItemId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'graph' | 'code'>('graph');
 
   useEffect(() => {
     fetchHistory();
   }, []);
 
-  const loadHistoryItem = (item: any) => {
-    clearGraph();
-    const graph = JSON.parse(item.analysis_result);
-    setGraph(graph.nodes, graph.edges, item.id ?? null, item.raw_yaml ?? null);
-    setChosenItemId(item.id);
+  const handleLoadHistoryItem = async (itemId: string) => {
+    await loadHistoryItem(itemId);
+    setChosenItemId(itemId);
   };
 
   return (
@@ -58,7 +56,7 @@ const Dashboard = () => {
               history.map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => loadHistoryItem(item)}
+                  onClick={() => handleLoadHistoryItem(item.id)}
                   className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-light-text-secondary ${item.id === chosenItemId && `bg-accent-light`} hover:bg-light-hover hover:text-light-text transition-colors`}
                 >
                   <div className="flex items-center gap-3 truncate">

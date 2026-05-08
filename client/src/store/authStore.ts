@@ -3,7 +3,7 @@ import { api } from '../api/axios';
 import { ROUTES } from '../constants/routes';
 
 interface User {
-  id: number;
+  id: string;
   email: string;
 }
 
