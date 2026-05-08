@@ -8,6 +8,7 @@ import { useAuthStore } from '../../store/authStore';
 import { Eye, EyeOff } from 'lucide-react';
 import LoginWithButton from '../login-with-button/LoginWithButton';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from 'react-i18next';
 
 type TFormProps = {
   onSuccess: () => void;
@@ -15,6 +16,7 @@ type TFormProps = {
 };
 
 const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -69,7 +71,7 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
 
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-light-text-secondary">
-          Пароль
+          {t('ui.homePage.loginModal.passwordLabel')}
         </label>
         <div className="relative">
           <input
@@ -98,19 +100,19 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
           {...register('remember_me')}
           className="rounded border-light-border text-accent focus:ring-accent"
         />
-        <span className="text-xs text-light-text-muted">Запам'ятати мене</span>
+        <span className="text-xs text-light-text-muted">{t('ui.homePage.loginModal.rememberMeLabel')}</span>
       </div>
       <button
         type="submit"
         className="flex justify-center gap-2 rounded-lg bg-accent py-2 px-6 font-semibold text-white hover:bg-accent-dark transition-colors"
       >
-        <span>Увійти →</span>
+        <span>{t('ui.homePage.loginModal.loginBtn')}</span>
       </button>
 
       <div className="relative flex items-center py-3 mt-2">
         <div className="flex-grow border-t border-light-border"></div>
         <span className="flex-shrink px-3 text-xs text-light-text-muted uppercase tracking-wider font-semibold">
-          Або увійти через
+          {t('ui.homePage.loginModal.orLoginWith')}
         </span>
         <div className="flex-grow border-t border-light-border"></div>
       </div>
@@ -124,13 +126,13 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
       </div>
 
       <p className="text-center text-sm text-light-text-secondary mt-2">
-        Не маєте акаунту?{' '}
+        {t('ui.homePage.loginModal.dontHaveAccount')} {' '}
         <button
           type="button"
           onClick={onSwitch}
           className="font-bold text-accent hover:underline"
         >
-          Створіть новий
+          {t('ui.homePage.loginModal.createAccount')}
         </button>
       </p>
     </form>

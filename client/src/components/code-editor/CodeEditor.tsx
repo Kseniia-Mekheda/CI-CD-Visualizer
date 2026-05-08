@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { useGraphStore } from '../../store/graphStore';
 import { Save, Download, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Editor, { useMonaco } from '@monaco-editor/react';
+import { useTranslation } from 'react-i18next';
 
 export default function CodeEditor() {
+  const { t } = useTranslation();
   const { rawYaml, updateYamlContent, downloadYaml, isLoading, fetchHistory } = useGraphStore();
   const [localYaml, setLocalYaml] = useState(rawYaml || '');
   const [error, setError] = useState('');
@@ -63,9 +65,9 @@ export default function CodeEditor() {
       <div className="flex items-center justify-between p-3 border-b border-light-border bg-white shadow-sm z-10">
         <div className="flex items-center gap-4">
           <span className="font-mono text-sm font-bold text-light-text-secondary">config.yml</span>
-          {isChanged && <span className="text-xs text-amber-600 font-medium italic">● незбережені зміни</span>}
+          {isChanged && <span className="text-xs text-amber-600 font-medium italic">{t('ui.dashboardPage.unsavedChanges')}</span>}
           {error && <span className="flex items-center gap-1 text-xs text-red-500 font-medium"><AlertCircle size={14}/> {error}</span>}
-          {success && <span className="flex items-center gap-1 text-xs text-green-600 font-medium"><CheckCircle2 size={14}/> Збережено!</span>}
+          {success && <span className="flex items-center gap-1 text-xs text-green-600 font-medium"><CheckCircle2 size={14}/> {t('ui.dashboardPage.savedChanges')}</span>}
         </div>
         
         <div className="flex items-center gap-2">
@@ -73,14 +75,14 @@ export default function CodeEditor() {
             onClick={downloadYaml} 
             className="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold rounded-lg text-light-text-secondary hover:bg-light-hover hover:text-light-text transition-colors"
           >
-            <Download size={14} /> Завантажити
+            <Download size={14} /> {t('ui.dashboardPage.downloadYamlBtn')}
           </button>
           <button 
             onClick={handleSave} 
             disabled={isLoading || !isChanged} 
             className="flex items-center gap-2 px-4 py-1.5 text-xs font-bold rounded-lg bg-accent text-white hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            <Save size={14} /> {isLoading ? 'Збереження...' : 'Зберегти'}
+            <Save size={14} /> {isLoading ? t('ui.dashboardPage.saving') : t('ui.dashboardPage.saveBtn')}
           </button>
         </div>
       </div>
@@ -104,7 +106,7 @@ export default function CodeEditor() {
           }}
           loading={
             <div className="flex h-full items-center justify-center text-light-text-muted">
-              Завантаження редактора...
+              {t('ui.dashboardPage.loadingEditor')}
             </div>
           }
         />

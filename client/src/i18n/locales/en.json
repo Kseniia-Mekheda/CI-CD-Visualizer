@@ -1,0 +1,81 @@
+{
+  "backErrors": {
+    "USER_ALREADY_EXISTS": "User with this email already exists",
+    "INVALID_CREDENTIALS": "Wrong email or password",
+    "GOOGLE_ACCOUNT_NO_EMAIL": "This Google account does not have an email",
+    "COULD_NOT_GET_REFRESH_TOKEN": "Could not get refresh token",
+    "INVALID_REFRESH_TOKEN": "Invalid refresh token",
+    "USER_NOT_FOUND": "User not found",
+    "ONLY_YAML_AND_YML_FILES_ALLOWED": "Only .yaml and .yml files are allowed",
+    "YAML_PARSING_ERROR": "Error parsing YAML file",
+    "FILE_PROCESSING_ERROR": "Error processing file",
+    "COULD_NOT_READ_YAML_FILE": "Could not read YAML file",
+    "GRAPH_GENERATION_ERROR": "Error generating graph",
+    "CONFIGURATION_NOT_FOUND": "Configuration not found",
+    "FILE_CANNOT_BE_EMPTY": "File cannot be empty",
+    "YAML_SYNTAX_ERROR": "Error in YAML file syntax",
+    "INTERNAL_ERROR": "Internal error updating",
+    "AI_ANALYSIS_ERROR": "Error analyzing pipeline",
+    "UNAUTHORIZED": "Unauthorized",
+    "INVALID_TOKEN": "Invalid token"
+  }, 
+  "backSuccess": {
+    "SUCCESSFUL_LOGIN": "Successful login",
+    "FILE_UPLOADED_AND_PARSED_SUCCESSFULLY": "File uploaded and parsed successfully",
+    "CONFIGURATION_UPDATED_SUCCESSFULLY": "Configuration updated successfully",
+    "TOKENS_UPDATED_SUCCESSFULLY": "Tokens updated successfully",
+    "LOGOUT_SUCCESSFULLY": "You have successfully logged out of the system"
+  },
+  "ui": {
+    "homePage": {
+      "uploadOtherFile": "Upload other file",
+      "loginToSaveHistory": "Login to save history",
+      "loginBtn": "Login",
+      "registerBtn": "Register",
+      "loginModal": {
+        "title": "Login",
+        "passwordLabel": "Password",
+        "rememberMeLabel": "Remember me",
+        "loginBtn": "Login →",
+        "orLoginWith": "Or login with",
+        "dontHaveAccount": "Don't have an account?",
+        "createAccount": "Create new account"
+      },
+      "registerModal": {
+        "title": "Sign up",
+        "passwordLabel": "Password",
+        "confirmPasswordLabel": "Confirm password",
+        "registerBtn": "Sign up →",
+        "orRegisterWith": "Or sign up with",
+        "haveAccount": "Already have an account?",
+        "login": "Login"
+      },
+      "title": "Transform your YAML into understandable graphs",
+      "description": "Upload GitHub Actions configurations and visualize dependencies between Jobs and Steps in real time.",
+      "uploadFile": {
+        "dragAndDrop": "Drag and drop file here or click",
+        "supportedFormats": "Supported formats: .yaml and .yml",
+        "loadingTitle": "Analyzing configuration...",
+        "loadingDescription": "This may take a while..."
+      }
+    },
+    "dashboardPage": {
+      "title": "Workspace",
+      "description": "Завантажте новий конфігураційний файл, щоб почати візуалізацію.",
+      "uploadBtn": "New pipeline",
+      "historyTitle": "History",
+      "graphViewBtn": "Graph",
+      "codeViewBtn": "YAML code",
+      "downloadYamlBtn": "Download",
+      "emptyHistory": "You don't have any saved files.",
+      "saveBtn": "Save",
+      "unsavedChanges": "● unsaved changes",
+      "savedChanges": "Saved!",
+      "analyzePipelineBtn": "Analyze with AI",
+      "aiAnalyzingTitle": "AI analyzing architecture...",
+      "aiAudit": "AI audit",
+      "healthIndex": "Health index",
+      "accountTitle": "Account"
+    }
+  }
+}

@@ -8,9 +8,11 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const AiReportPanel = () => {
   const { aiReport, isAnalyzing, analyzePipeline } = useGraphStore();
+  const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   if (!aiReport && !isAnalyzing) {
@@ -19,7 +21,7 @@ const AiReportPanel = () => {
         onClick={analyzePipeline}
         className="absolute top-4 right-4 z-10 flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 px-5 py-2.5 font-bold text-white shadow-lg transition-transform hover:scale-105"
       >
-        <Sparkles size={18} /> Проаналізувати з AI
+        <Sparkles size={18} /> {t('ui.dashboardPage.analyzePipelineBtn')}
       </button>
     );
   }
@@ -29,7 +31,7 @@ const AiReportPanel = () => {
       <div className="absolute top-4 right-4 z-10 flex items-center gap-3 rounded-xl bg-white p-4 shadow-xl border border-light-border">
         <Sparkles className="animate-spin text-purple-600" size={20} />
         <span className="font-semibold text-light-text text-sm">
-          AI аналізує архітектуру...
+          {t('ui.dashboardPage.aiAnalyzingTitle')}
         </span>
       </div>
     );
@@ -54,7 +56,7 @@ const AiReportPanel = () => {
         <Sparkles className="shrink-0 text-purple-600" size={18} />
         <div className="min-w-0 pr-1">
           <p className="text-xs font-bold text-light-text leading-tight">
-            AI аудит
+            {t('ui.dashboardPage.aiAudit')}
           </p>
           <p
             className={`text-[11px] font-semibold tabular-nums ${aiReport.score > 80 ? 'text-green-600' : 'text-amber-600'}`}
@@ -81,7 +83,7 @@ const AiReportPanel = () => {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <Sparkles className="text-purple-600 shrink-0" size={20} />
-            <h3 className="font-bold text-light-text text-lg">AI аудит</h3>
+            <h3 className="font-bold text-light-text text-lg">{t('ui.dashboardPage.aiAudit')}</h3>
           </div>
           <p className="text-xs text-light-text-secondary mt-1">
             {aiReport.summary}
@@ -90,7 +92,7 @@ const AiReportPanel = () => {
         <div className="flex shrink-0 items-start gap-1">
           <div className="flex flex-col items-end pl-1">
             <span className="text-[10px] uppercase font-bold text-light-text-muted">
-              Індекс здоров'я
+              {t('ui.dashboardPage.healthIndex')}
             </span>
             <span
               className={`text-2xl font-black ${aiReport.score > 80 ? 'text-green-500' : 'text-yellow-500'}`}

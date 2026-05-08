@@ -6,9 +6,12 @@ import CodeEditor from '../../components/code-editor/CodeEditor';
 import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
 import JobSidebar from '../../components/job-sidebar/JobSidebar';
 import UploadFile from '../../components/upload-file/UploadFile';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../../components/lang-toggle/langToggle';
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
   const { nodes, history, fetchHistory, clearGraph, setGraph } =
     useGraphStore();
   const [ chosenItemId, setChosenItemId ] = useState<string>('');
@@ -36,18 +39,19 @@ const Dashboard = () => {
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-accent to-accent-dark">
               Pipely
             </span>
+            <LanguageToggle />
           </div>
           <button
             onClick={clearGraph}
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-accent px-4 py-2.5 font-bold text-white shadow-md hover:bg-accent-dark transition-colors"
           >
-            <Plus size={18} /> Новий пайплайн
+            <Plus size={18} /> {t('ui.dashboardPage.uploadBtn')}
           </button>
         </div>
 
         <div className="flex-1 overflow-y-auto p-4">
           <h3 className="mb-3 text-xs font-bold uppercase tracking-wider text-light-text-muted px-2">
-            Історія
+            {t('ui.dashboardPage.historyTitle')}
           </h3>
           <div className="space-y-1">
             {history.length > 0 ? (
@@ -72,7 +76,7 @@ const Dashboard = () => {
               ))
             ) : (
               <div className="px-2 py-4 text-center text-sm text-light-text-muted italic">
-                У вас ще немає збережених файлів.
+                {t('ui.dashboardPage.emptyHistory')}
               </div>
             )}
           </div>
@@ -82,7 +86,7 @@ const Dashboard = () => {
           <div className="flex items-center justify-between rounded-xl bg-white p-3 shadow-sm border border-light-border">
             <div className="flex flex-col truncate pr-2">
               <span className="text-[10px] uppercase font-bold text-light-text-muted">
-                Акаунт
+                {t('ui.dashboardPage.accountTitle')}
               </span>
               <span className="text-sm font-semibold text-light-text truncate">
                 {user?.email}
@@ -91,7 +95,7 @@ const Dashboard = () => {
             <button
               onClick={logout}
               className="rounded-lg p-2 text-light-text-muted hover:bg-red-50 hover:text-red-500 transition-colors"
-              title="Вийти"
+              title={t('ui.dashboardPage.logoutTitle')}
             >
               <LogOut size={18} />
             </button>
@@ -108,13 +112,13 @@ const Dashboard = () => {
                  onClick={() => setViewMode('graph')}
                  className={`flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${viewMode === 'graph' ? 'bg-white shadow-sm text-accent' : 'text-light-text-muted hover:text-light-text'}`}
                >
-                 <LayoutTemplate size={16} /> Граф
+                 <LayoutTemplate size={16} /> {t('ui.dashboardPage.graphViewBtn')}
                </button>
                <button
                  onClick={() => setViewMode('code')}
                  className={`flex items-center gap-2 px-4 py-1.5 text-sm font-bold rounded-lg transition-all ${viewMode === 'code' ? 'bg-white shadow-sm text-accent' : 'text-light-text-muted hover:text-light-text'}`}
                >
-                 <Code2 size={16} /> Код YAML
+                 <Code2 size={16} /> {t('ui.dashboardPage.codeViewBtn')}
                </button>
              </div>
           </div>
@@ -136,11 +140,10 @@ const Dashboard = () => {
             <div className="w-full max-w-2xl">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-extrabold text-light-text mb-3">
-                  Робочий простір
+                  {t('ui.dashboardPage.title')}
                 </h2>
                 <p className="text-light-text-secondary">
-                  Завантажте новий конфігураційний файл, щоб почати
-                  візуалізацію.
+                  {t('ui.dashboardPage.description')}
                 </p>
               </div>
               <UploadFile />

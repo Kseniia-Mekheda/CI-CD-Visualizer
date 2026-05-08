@@ -1,0 +1,81 @@
+{
+  "backErrors": {
+    "USER_ALREADY_EXISTS": "Користувач з таким email вже зареєстрований",
+    "INVALID_CREDENTIALS": "Неправильні email або пароль",
+    "GOOGLE_ACCOUNT_NO_EMAIL": "Цей Google акаунт не має email",
+    "COULD_NOT_GET_REFRESH_TOKEN": "Не вдалося отримати refresh token",
+    "INVALID_REFRESH_TOKEN": "Неправильний refresh token",
+    "USER_NOT_FOUND": "Користувача не знайдено",
+    "ONLY_YAML_AND_YML_FILES_ALLOWED": "Дозволені лише файли .yaml або .yml",
+    "YAML_PARSING_ERROR": "Помилка при парсингу YAML файлу",
+    "FILE_PROCESSING_ERROR": "Помилка при обробці файлу",
+    "COULD_NOT_READ_YAML_FILE": "Не вдалося прочитати YAML файл",
+    "GRAPH_GENERATION_ERROR": "Помилка при генерації графу",
+    "CONFIGURATION_NOT_FOUND": "Конфігурація не знайдена",
+    "FILE_CANNOT_BE_EMPTY": "Файл не може бути порожнім",
+    "YAML_SYNTAX_ERROR": "Помилка в синтаксисі YAML файлу",
+    "INTERNAL_ERROR": "Внутрішня помилка при оновленні",
+    "AI_ANALYSIS_ERROR": "Помилка при аналізі пайплайну",
+    "UNAUTHORIZED": "Не авторизовано",
+    "INVALID_TOKEN": "Невалідний токен"
+  }, 
+  "backSuccess": {
+    "SUCCESSFUL_LOGIN": "Успішний вхід",
+    "FILE_UPLOADED_AND_PARSED_SUCCESSFULLY": "Файл успішно завантажено та проаналізовано",
+    "CONFIGURATION_UPDATED_SUCCESSFULLY": "Конфігурація успішно оновлена",
+    "TOKENS_UPDATED_SUCCESSFULLY": "Токени успішно оновлені",
+    "LOGOUT_SUCCESSFULLY": "Ви успішно вийшли з системи"
+  },
+  "ui": {
+    "homePage": {
+      "uploadOtherFile": "Завантажити інший файл",
+      "loginToSaveHistory": "Увійдіть, щоб зберігати історію конфігурацій",
+      "loginBtn": "Увійти",
+      "registerBtn": "Зареєструватися",
+      "loginModal": {
+        "title": "Вхід",
+        "passwordLabel": "Пароль",
+        "rememberMeLabel": "Запам'ятати мене",
+        "loginBtn": "Увійти →",
+        "orLoginWith": "Або увійти через",
+        "dontHaveAccount": "Не маєте акаунту?",
+        "createAccount": "Створити новий"
+      },
+      "registerModal": {
+        "title": "Реєстрація",
+        "passwordLabel": "Пароль",
+        "confirmPasswordLabel": "Підтвердіть пароль",
+        "registerBtn": "Зареєструватися →",
+        "orRegisterWith": "Або зареєструватися через",
+        "haveAccount": "Вже маєте акаунт?",
+        "login": "Увійти"
+      },
+      "title": "Перетворіть ваші YAML у зрозумілі графи",
+      "description": "Завантажуйте конфігурації GitHub Actions та візуалізуйте залежності між Jobs та Steps в реальному часі.",
+      "uploadFile": {
+        "dragAndDrop": "Перетягніть файл сюди або натисніть",
+        "supportedFormats": "Підтримуються формати .yaml та .yml",
+        "loadingTitle": "Аналізуємо конфігурацію...",
+        "loadingDescription": "Це може зайняти деякий час..."
+      }
+    },
+    "dashboardPage": {
+      "title": "Робочий простір",
+      "description": "Завантажте новий конфігураційний файл, щоб почати візуалізацію.",
+      "uploadBtn": "Новий пайплайн",
+      "historyTitle": "Історія",
+      "graphViewBtn": "Граф",
+      "codeViewBtn": "Код YAML",
+      "downloadYamlBtn": "Завантажити",
+      "emptyHistory": "У вас ще немає збережених файлів.",
+      "saveBtn": "Зберегти",
+      "unsavedChanges": "● незбережені зміни",
+      "savedChanges": "Збережено!",
+      "analyzePipelineBtn": "Проаналізувати з AI",
+      "aiAnalyzingTitle": "AI аналізує архітектуру...",
+      "aiAudit": "AI аудит",
+      "healthIndex": "Індекс здоров'я",
+      "accountTitle": "Акаунт"
+    }
+  }
+}

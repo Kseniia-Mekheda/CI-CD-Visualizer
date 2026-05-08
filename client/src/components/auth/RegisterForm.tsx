@@ -7,12 +7,14 @@ import { ROUTES } from '../../constants/routes';
 import { Eye, EyeOff } from 'lucide-react';
 import LoginWithButton from '../login-with-button/LoginWithButton';
 import { FcGoogle } from 'react-icons/fc';
+import { useTranslation } from 'react-i18next';
 
 type TFormProps = {
   onSwitch: () => void;
 };
 
 const RegisterForm = ({ onSwitch }: TFormProps) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -66,7 +68,7 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
 
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-light-text-secondary">
-          Пароль
+          {t('ui.homePage.registerModal.passwordLabel')}
         </label>
         <div className="relative">
           <input
@@ -92,7 +94,7 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
 
       <div className="flex flex-col gap-1">
         <label className="text-sm font-medium text-light-text-secondary">
-          Підтвердіть пароль
+          {t('ui.homePage.registerModal.confirmPasswordLabel')}
         </label>
         <input
           type="password"
@@ -110,13 +112,13 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
         type="submit"
         className="flex justify-center gap-2 rounded-lg bg-accent py-2 px-6 font-semibold text-white hover:bg-accent-dark transition-colors"
       >
-        <span>Зареєструватися →</span>
+        <span>{t('ui.homePage.registerModal.registerBtn')}</span>
       </button>
 
       <div className="relative flex items-center py-3 mt-2">
         <div className="flex-grow border-t border-light-border"></div>
         <span className="flex-shrink px-3 text-xs text-light-text-muted uppercase tracking-wider font-semibold">
-          Або зареєструватися через
+          {t('ui.homePage.registerModal.orRegisterWith')}
         </span>
         <div className="flex-grow border-t border-light-border"></div>
       </div>
@@ -130,13 +132,13 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
       </div>
 
       <p className="text-center text-sm text-light-text-secondary mt-2">
-        Вже маєте акаунт?{' '}
+        {t('ui.homePage.registerModal.haveAccount')} {' '}
         <button
           type="button"
           onClick={onSwitch}
           className="font-bold text-accent hover:underline"
         >
-          Увійти
+          {t('ui.homePage.registerModal.login')}
         </button>
       </p>
     </form>

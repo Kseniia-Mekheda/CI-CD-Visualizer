@@ -4,6 +4,7 @@ import { useAuthStore } from './store/authStore';
 import Home from './pages/home/Home';
 import './App.css';
 import Dashboard from './pages/dashboard/Dashboard';
+import './i18n/config';
 
 function App() {
   const { checkAuth, isLoading, user } = useAuthStore();

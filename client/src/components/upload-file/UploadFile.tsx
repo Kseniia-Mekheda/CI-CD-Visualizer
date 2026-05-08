@@ -4,8 +4,10 @@ import { useGraphStore } from '../../store/graphStore';
 import { ROUTES } from '../../constants/routes';
 import { api } from '../../api/axios';
 import { MIN_LOADER_MS } from '../../constants/common';
+import { useTranslation } from 'react-i18next';
 
 const UploadFile = () => {
+  const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -86,7 +88,7 @@ const UploadFile = () => {
         {isLoading ? (
           <div className="flex flex-col items-center text-accent">
             <Loader2 size={48} className="animate-spin mb-4" />
-            <p className="font-bold">Аналізуємо конфігурацію...</p>
+            <p className="font-bold">{t('ui.homePage.uploadFile.loadingTitle')}</p>
           </div>
         ) : (
           <>
@@ -96,10 +98,10 @@ const UploadFile = () => {
               <Upload size={32} />
             </div>
             <p className="mb-2 font-bold text-light-text text-center">
-              Перетягніть файл сюди або натисніть
+              {t('ui.homePage.uploadFile.dragAndDrop')}
             </p>
             <p className="text-sm text-light-text-muted">
-              Підтримуються формати .yaml та .yml
+              {t('ui.homePage.uploadFile.supportedFormats')}
             </p>
           </>
         )}

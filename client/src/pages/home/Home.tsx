@@ -9,9 +9,11 @@ import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
 import { useGraphStore } from '../../store/graphStore';
 import JobSidebar from '../../components/job-sidebar/JobSidebar';
 import Header from '../../components/header/Header';
+import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const { user } = useAuthStore();
+  const { t } = useTranslation();
   const [activeModal, setActiveModal] = useState<'login' | 'register' | null>(
     null,
   );
@@ -30,11 +32,11 @@ export default function Home() {
                   onClick={clearGraph}
                   className="flex items-center gap-2 text-sm font-medium text-light-text-secondary hover:text-accent transition-colors"
                 >
-                  <ArrowLeft size={16} /> Завантажити інший файл
+                  <ArrowLeft size={16} /> {t('ui.homePage.uploadOtherFile')}
                 </button>
                 {!user && (
                   <span className="text-xs text-light-text-muted">
-                    Увійдіть, щоб зберігати історію конфігурацій
+                    {t('ui.homePage.loginToSaveHistory')}
                   </span>
                 )}
               </div>
@@ -48,11 +50,10 @@ export default function Home() {
             <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
               <div className="max-w-3xl text-center">
                 <h1 className="mb-6 text-5xl font-extrabold text-light-text leading-tight">
-                  Перетворіть ваші YAML у зрозумілі графи
+                  {t('ui.homePage.title')}
                 </h1>
                 <p className="mb-10 text-lg text-light-text-secondary">
-                  Завантажуйте конфігурації GitHub Actions та візуалізуйте
-                  залежності між Jobs та Steps в реальному часі.
+                  {t('ui.homePage.description')}
                 </p>
 
                 <UploadFile />
@@ -65,7 +66,7 @@ export default function Home() {
       <Modal
         isOpen={activeModal === 'login'}
         onClose={() => setActiveModal(null)}
-        title="Вхід"
+        title={t('ui.homePage.loginModal.title')}
       >
         <LoginForm
           onSuccess={() => setActiveModal(null)}
@@ -76,7 +77,7 @@ export default function Home() {
       <Modal
         isOpen={activeModal === 'register'}
         onClose={() => setActiveModal(null)}
-        title="Реєстрація"
+        title={t('ui.homePage.registerModal.title')}
       >
         <RegisterForm onSwitch={() => setActiveModal('login')} />
       </Modal>
