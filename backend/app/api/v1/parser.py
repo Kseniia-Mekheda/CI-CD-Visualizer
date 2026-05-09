@@ -110,6 +110,29 @@ def get_history_item_by_id(
         "raw_yaml": config.raw_yaml,
     }
 
+
+@router.delete("/history/{config_id}", status_code=204)
+def delete_history_item(
+    config_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    config = (
+        db.query(Configuration)
+        .filter(
+            Configuration.id == config_id,
+            Configuration.user_id == current_user.id,
+        )
+        .first()
+    )
+
+    if not config:
+        raise HTTPException(status_code=404, detail="CONFIGURATION_NOT_FOUND")
+
+    db.delete(config)
+    db.commit()
+
+
 @router.put("/update")
 def update_yaml_config(
     request: UpdateConfigRequest,

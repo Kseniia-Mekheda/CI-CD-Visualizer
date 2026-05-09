@@ -20,6 +20,7 @@ interface GraphState {
   clearGraph: () => void;
   fetchHistory: () => Promise<void>;
   loadHistoryItem: (configId: string) => Promise<void>;
+  deleteHistoryItem: (configId: string) => Promise<void>;
   analyzePipeline: () => Promise<void>;
   updateYamlContent: (newYaml: string) => Promise<void>;
   downloadYaml: () => void;
@@ -83,6 +84,30 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     } catch (error) {
       console.error('Помилка завантаження конфігурації', error);
       set({ isLoading: false });
+    }
+  },
+
+  deleteHistoryItem: async (configId: string) => {
+    try {
+      await api.delete(ROUTES.HISTORY_BY_ID(configId));
+      const { currentConfigId, history } = get();
+      const nextHistory = history.filter((h) => h.id !== configId);
+      if (currentConfigId === configId) {
+        set({
+          history: nextHistory,
+          nodes: [],
+          edges: [],
+          selectedNode: null,
+          currentConfigId: null,
+          rawYaml: null,
+          aiReport: null,
+        });
+      } else {
+        set({ history: nextHistory });
+      }
+    } catch (error) {
+      console.error('Помилка видалення з історії', error);
+      throw error;
     }
   },
 

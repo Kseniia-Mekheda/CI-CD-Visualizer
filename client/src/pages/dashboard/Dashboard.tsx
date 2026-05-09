@@ -1,20 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useGraphStore } from '../../store/graphStore';
 import { useAuthStore } from '../../store/authStore';
-import { Plus, FileText, ChevronRight, LogOut, Waypoints, LayoutTemplate, Code2 } from 'lucide-react';
+import { Plus, FileText, ChevronRight, LogOut, Waypoints, LayoutTemplate, Code2, Trash2 } from 'lucide-react';
 import CodeEditor from '../../components/code-editor/CodeEditor';
 import GraphVisualizer from '../../components/graph-canvas/GraphVisualizer';
 import JobSidebar from '../../components/job-sidebar/JobSidebar';
 import UploadFile from '../../components/upload-file/UploadFile';
+import Modal from '../../components/modal/Modal';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../../components/lang-toggle/langToggle';
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore();
   const { t } = useTranslation();
-  const { nodes, history, fetchHistory, clearGraph, loadHistoryItem } =
+  const { nodes, history, fetchHistory, clearGraph, loadHistoryItem, deleteHistoryItem } =
     useGraphStore();
   const [chosenItemId, setChosenItemId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'graph' | 'code'>('graph');
 
   useEffect(() => {
@@ -24,6 +26,24 @@ const Dashboard = () => {
   const handleLoadHistoryItem = async (itemId: string) => {
     await loadHistoryItem(itemId);
     setChosenItemId(itemId);
+  };
+
+  const handleDeleteHistoryItem = async (itemId: string) => {
+    try {
+      await deleteHistoryItem(itemId);
+      if (chosenItemId === itemId) {
+        setChosenItemId(null);
+      }
+    } catch {
+      /* logged in store */
+    }
+  };
+
+  const confirmDeleteHistoryItem = async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
+    await handleDeleteHistoryItem(id);
   };
 
   return (
@@ -54,23 +74,40 @@ const Dashboard = () => {
           <div className="space-y-1">
             {history.length > 0 ? (
               history.map((item) => (
-                <button
+                <div
                   key={item.id}
-                  onClick={() => handleLoadHistoryItem(item.id)}
-                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-light-text-secondary ${item.id === chosenItemId && `bg-accent-light`} hover:bg-light-hover hover:text-light-text transition-colors`}
+                  className={`group flex w-full items-center gap-1 rounded-lg ${item.id === chosenItemId ? 'bg-accent-light' : ''}`}
                 >
-                  <div className="flex items-center gap-3 truncate">
-                    <FileText
-                      size={16}
-                      className="text-light-text-muted shrink-0"
+                  <button
+                    type="button"
+                    onClick={() => handleLoadHistoryItem(item.id)}
+                    className="flex min-w-0 flex-1 items-center justify-between rounded-lg px-3 py-2 text-left text-sm font-medium text-light-text-secondary hover:bg-light-hover hover:text-light-text transition-colors"
+                  >
+                    <div className="flex items-center gap-3 truncate">
+                      <FileText
+                        size={16}
+                        className="text-light-text-muted shrink-0"
+                      />
+                      <span className="truncate">{item.name}</span>
+                    </div>
+                    <ChevronRight
+                      size={14}
+                      className="text-light-text-muted shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
                     />
-                    <span className="truncate">{item.name}</span>
-                  </div>
-                  <ChevronRight
-                    size={14}
-                    className="text-light-text-muted opacity-0 group-hover:opacity-100 transition-opacity"
-                  />
-                </button>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPendingDeleteId(item.id);
+                    }}
+                    className="shrink-0 rounded-lg p-2 text-light-text-muted hover:bg-red-50 hover:text-red-500 transition-colors"
+                    title={t('ui.dashboardPage.deleteHistoryTitle')}
+                    aria-label={t('ui.dashboardPage.deleteHistoryTitle')}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               ))
             ) : (
               <div className="px-2 py-4 text-center text-sm text-light-text-muted italic">
@@ -149,6 +186,32 @@ const Dashboard = () => {
           </div>
         )}
       </main>
+
+      <Modal
+        isOpen={pendingDeleteId !== null}
+        onClose={() => setPendingDeleteId(null)}
+        title={t('ui.dashboardPage.deleteHistoryModalTitle')}
+      >
+        <p className="mb-8 text-base leading-relaxed text-light-text-secondary">
+          {t('ui.dashboardPage.deleteHistoryModalMessage')}
+        </p>
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <button
+            type="button"
+            onClick={confirmDeleteHistoryItem}
+            className="rounded-xl bg-accent px-5 py-2.5 font-semibold text-white shadow-md hover:bg-accent-dark transition-colors"
+          >
+            {t('ui.dashboardPage.deleteHistoryConfirmBtn')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setPendingDeleteId(null)}
+            className="rounded-xl border border-light-border bg-white px-5 py-2.5 font-semibold text-light-text-secondary hover:bg-light-hover transition-colors"
+          >
+            {t('ui.dashboardPage.deleteHistoryCancelBtn')}
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

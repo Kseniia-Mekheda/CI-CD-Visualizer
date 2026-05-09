@@ -75,7 +75,13 @@
       "aiAnalyzingTitle": "AI analyzing architecture...",
       "aiAudit": "AI audit",
       "healthIndex": "Health index",
-      "accountTitle": "Account"
+      "accountTitle": "Account",
+      "logoutTitle": "Log out",
+      "deleteHistoryTitle": "Remove from history",
+      "deleteHistoryModalTitle": "Remove from history",
+      "deleteHistoryModalMessage": "Are you sure you want to remove this entry from history?",
+      "deleteHistoryConfirmBtn": "Delete",
+      "deleteHistoryCancelBtn": "Cancel"
     }
   }
 }

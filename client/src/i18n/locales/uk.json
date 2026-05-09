@@ -75,7 +75,13 @@
       "aiAnalyzingTitle": "AI аналізує архітектуру...",
       "aiAudit": "AI аудит",
       "healthIndex": "Індекс здоров'я",
-      "accountTitle": "Акаунт"
+      "accountTitle": "Акаунт",
+      "logoutTitle": "Вийти",
+      "deleteHistoryTitle": "Видалити з історії",
+      "deleteHistoryModalTitle": "Видалення з історії",
+      "deleteHistoryModalMessage": "Ви впевнені, що хочете видалити цей запис з історії?",
+      "deleteHistoryConfirmBtn": "Видалити",
+      "deleteHistoryCancelBtn": "Скасувати"
     }
   }
 }
