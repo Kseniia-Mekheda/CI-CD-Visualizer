@@ -8,6 +8,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import LoginWithButton from '../login-with-button/LoginWithButton';
 import { FcGoogle } from 'react-icons/fc';
 import { useTranslation } from 'react-i18next';
+import { translateBackendErrorFromErr } from '../../utils/backendError';
 
 type TFormProps = {
   onSwitch: () => void;
@@ -33,8 +34,10 @@ const RegisterForm = ({ onSwitch }: TFormProps) => {
         password: data.password,
       });
       onSwitch();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Помилка при реєстрації');
+    } catch (err: unknown) {
+      setError(
+        translateBackendErrorFromErr(err, t, 'backErrors.GENERIC_REGISTER_ERROR')
+      );
     }
   };
 

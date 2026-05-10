@@ -17,7 +17,9 @@
     "INTERNAL_ERROR": "Internal error updating",
     "AI_ANALYSIS_ERROR": "Error analyzing pipeline",
     "UNAUTHORIZED": "Unauthorized",
-    "INVALID_TOKEN": "Invalid token"
+    "INVALID_TOKEN": "Invalid token",
+    "UNKNOWN": "Something went wrong. Please try again.",
+    "GENERIC_REGISTER_ERROR": "Registration failed. Please try again."
   }, 
   "backSuccess": {
     "SUCCESSFUL_LOGIN": "Successful login",
@@ -56,7 +58,8 @@
         "dragAndDrop": "Drag and drop file here or click",
         "supportedFormats": "Supported formats: .yaml and .yml",
         "loadingTitle": "Analyzing configuration...",
-        "loadingDescription": "This may take a while..."
+        "loadingDescription": "This may take a while...",
+        "invalidExtension": "Please upload a .yaml or .yml file"
       }
     },
     "dashboardPage": {
@@ -81,7 +84,8 @@
       "deleteHistoryModalTitle": "Remove from history",
       "deleteHistoryModalMessage": "Are you sure you want to remove this entry from history?",
       "deleteHistoryConfirmBtn": "Delete",
-      "deleteHistoryCancelBtn": "Cancel"
+      "deleteHistoryCancelBtn": "Cancel",
+      "aiAnalysisErrorDismiss": "Dismiss"
     }
   }
 }

@@ -10,10 +10,44 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+const HIGH_SEVERITY = new Set(['Висока', 'High']);
+const PERFORMANCE_CATEGORY = new Set(['Продуктивність', 'Performance']);
+const SECURITY_CATEGORY = new Set(['Безпека', 'Security']);
+
 const AiReportPanel = () => {
-  const { aiReport, isAnalyzing, analyzePipeline } = useGraphStore();
+  const {
+    aiReport,
+    isAnalyzing,
+    analyzePipeline,
+    aiAnalysisError,
+    clearAiAnalysisError,
+  } = useGraphStore();
   const { t } = useTranslation();
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  if (!aiReport && !isAnalyzing && aiAnalysisError) {
+    return (
+      <div className="absolute top-4 right-4 z-10 flex max-w-sm flex-col gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 shadow-lg">
+        <p>{aiAnalysisError}</p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={clearAiAnalysisError}
+            className="rounded-lg border border-red-200 bg-white px-3 py-1.5 font-medium text-red-700 transition-colors hover:bg-red-100"
+          >
+            {t('ui.dashboardPage.aiAnalysisErrorDismiss')}
+          </button>
+          <button
+            type="button"
+            onClick={analyzePipeline}
+            className="rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 px-3 py-1.5 font-semibold text-white shadow transition-transform hover:scale-[1.02]"
+          >
+            {t('ui.dashboardPage.analyzePipelineBtn')}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (!aiReport && !isAnalyzing) {
     return (
@@ -38,15 +72,15 @@ const AiReportPanel = () => {
   }
 
   const getSeverityStyle = (severity: string, category: string) => {
-    if (severity === 'Висока') return 'bg-red-50 text-red-600 border-red-200';
-    if (category === 'Продуктивність')
+    if (HIGH_SEVERITY.has(severity)) return 'bg-red-50 text-red-600 border-red-200';
+    if (PERFORMANCE_CATEGORY.has(category))
       return 'bg-yellow-50 text-yellow-600 border-yellow-200';
     return 'bg-green-50 text-green-600 border-green-200';
   };
 
   const getIcon = (category: string) => {
-    if (category === 'Безпека') return <ShieldAlert size={16} />;
-    if (category === 'Продуктивність') return <Zap size={16} />;
+    if (SECURITY_CATEGORY.has(category)) return <ShieldAlert size={16} />;
+    if (PERFORMANCE_CATEGORY.has(category)) return <Zap size={16} />;
     return <CheckCircle size={16} />;
   };
 

@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import type { Node, Edge } from 'reactflow';
 import { api } from '../api/axios';
 import { ROUTES } from '../constants/routes';
+import i18n from '../i18n/config';
+import { getErrorDetail, translateBackendErrorSync } from '../utils/backendError';
 
 interface GraphState {
   nodes: Node[];
@@ -10,6 +12,7 @@ interface GraphState {
   currentConfigId: string | null;
   isLoading: boolean;
   isAnalyzing: boolean;
+  aiAnalysisError: string | null;
   aiReport: any | null;
   selectedNode: Node | null;
   history: Array<{ id: string; name: string; created_at: string }>;
@@ -22,6 +25,7 @@ interface GraphState {
   loadHistoryItem: (configId: string) => Promise<void>;
   deleteHistoryItem: (configId: string) => Promise<void>;
   analyzePipeline: () => Promise<void>;
+  clearAiAnalysisError: () => void;
   updateYamlContent: (newYaml: string) => Promise<void>;
   downloadYaml: () => void;
 }
@@ -32,6 +36,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
   rawYaml: null,
   currentConfigId: null,
   isAnalyzing: false,
+  aiAnalysisError: null,
   aiReport: null,
   isLoading: false,
   selectedNode: null,
@@ -45,6 +50,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       selectedNode: null,
       rawYaml,
       aiReport: null,
+      aiAnalysisError: null,
     }),
   setLoading: (loading) => set({ isLoading: loading }),
   setSelectedNode: (node) => set({ selectedNode: node }),
@@ -56,6 +62,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
       currentConfigId: null,
       rawYaml: null,
       aiReport: null,
+      aiAnalysisError: null,
     }),
 
   fetchHistory: async () => {
@@ -79,6 +86,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         selectedNode: null,
         rawYaml: data.raw_yaml ?? null,
         aiReport: null,
+        aiAnalysisError: null,
         isLoading: false,
       });
     } catch (error) {
@@ -111,18 +119,29 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     }
   },
 
+  clearAiAnalysisError: () => set({ aiAnalysisError: null }),
+
   analyzePipeline: async () => {
     const { currentConfigId } = get();
     if (!currentConfigId) return;
 
-    set({ isAnalyzing: true });
+    const locale = i18n.language.startsWith('en') ? 'en' : 'uk';
+
+    set({ isAnalyzing: true, aiAnalysisError: null });
     try {
       const { data } = await api.post(ROUTES.AI_ANALYZE, {
         config_id: currentConfigId,
+        locale,
       });
-      set({ aiReport: data });
+      set({ aiReport: data, aiAnalysisError: null });
     } catch (error) {
       console.error('AI Analysis error', error);
+      set({
+        aiAnalysisError: translateBackendErrorSync(
+          getErrorDetail(error),
+          'backErrors.AI_ANALYSIS_ERROR'
+        ),
+      });
     } finally {
       set({ isAnalyzing: false });
     }
@@ -146,9 +165,14 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         aiReport: null,
         isLoading: false
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       set({ isLoading: false });
-      throw new Error(error.response?.data?.detail || "Помилка оновлення файлу");
+      throw new Error(
+        translateBackendErrorSync(
+          getErrorDetail(error),
+          'backErrors.INTERNAL_ERROR'
+        )
+      );
     }
   },
 

@@ -17,7 +17,9 @@
     "INTERNAL_ERROR": "Внутрішня помилка при оновленні",
     "AI_ANALYSIS_ERROR": "Помилка при аналізі пайплайну",
     "UNAUTHORIZED": "Не авторизовано",
-    "INVALID_TOKEN": "Невалідний токен"
+    "INVALID_TOKEN": "Невалідний токен",
+    "UNKNOWN": "Сталася помилка. Спробуйте ще раз.",
+    "GENERIC_REGISTER_ERROR": "Не вдалося зареєструватися. Спробуйте ще раз."
   }, 
   "backSuccess": {
     "SUCCESSFUL_LOGIN": "Успішний вхід",
@@ -56,7 +58,8 @@
         "dragAndDrop": "Перетягніть файл сюди або натисніть",
         "supportedFormats": "Підтримуються формати .yaml та .yml",
         "loadingTitle": "Аналізуємо конфігурацію...",
-        "loadingDescription": "Це може зайняти деякий час..."
+        "loadingDescription": "Це може зайняти деякий час...",
+        "invalidExtension": "Будь ласка, завантажте файл .yaml або .yml"
       }
     },
     "dashboardPage": {
@@ -81,7 +84,8 @@
       "deleteHistoryModalTitle": "Видалення з історії",
       "deleteHistoryModalMessage": "Ви впевнені, що хочете видалити цей запис з історії?",
       "deleteHistoryConfirmBtn": "Видалити",
-      "deleteHistoryCancelBtn": "Скасувати"
+      "deleteHistoryCancelBtn": "Скасувати",
+      "aiAnalysisErrorDismiss": "Закрити"
     }
   }
 }

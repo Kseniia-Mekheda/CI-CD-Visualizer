@@ -9,6 +9,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import LoginWithButton from '../login-with-button/LoginWithButton';
 import { FcGoogle } from 'react-icons/fc';
 import { useTranslation } from 'react-i18next';
+import { translateBackendErrorFromErr } from '../../utils/backendError';
 
 type TFormProps = {
   onSuccess: () => void;
@@ -38,8 +39,10 @@ const LoginForm = ({ onSuccess, onSwitch }: TFormProps) => {
       });
       await login();
       onSuccess();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Невірні дані для входу');
+    } catch (err: unknown) {
+      setError(
+        translateBackendErrorFromErr(err, t, 'backErrors.INVALID_CREDENTIALS')
+      );
     }
   };
 

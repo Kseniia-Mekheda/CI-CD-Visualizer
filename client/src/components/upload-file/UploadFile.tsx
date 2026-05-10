@@ -5,6 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import { api } from '../../api/axios';
 import { MIN_LOADER_MS } from '../../constants/common';
 import { useTranslation } from 'react-i18next';
+import { translateBackendErrorFromErr } from '../../utils/backendError';
 
 const UploadFile = () => {
   const { t } = useTranslation();
@@ -16,7 +17,7 @@ const UploadFile = () => {
 
   const handleFile = async (file: File) => {
     if (!file.name.endsWith('.yaml') && !file.name.endsWith('.yml')) {
-      setError('Будь ласка, завантажте .yaml або .yml файл');
+      setError(t('ui.homePage.uploadFile.invalidExtension'));
       return;
     }
 
@@ -36,8 +37,10 @@ const UploadFile = () => {
       
       setGraph(data.graph_data.nodes, data.graph_data.edges, data.config_id, data.raw_yaml ?? null);
       await fetchHistory();
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Помилка при обробці файлу');
+    } catch (err: unknown) {
+      setError(
+        translateBackendErrorFromErr(err, t, 'backErrors.FILE_PROCESSING_ERROR')
+      );
     } finally {
       const elapsed = Date.now() - startedAt;
       const remaining = Math.max(0, MIN_LOADER_MS - elapsed);
