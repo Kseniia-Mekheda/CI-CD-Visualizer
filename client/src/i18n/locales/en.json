@@ -86,7 +86,13 @@
       "deleteHistoryModalMessage": "Are you sure you want to remove this entry from history?",
       "deleteHistoryConfirmBtn": "Delete",
       "deleteHistoryCancelBtn": "Cancel",
-      "aiAnalysisErrorDismiss": "Dismiss"
+      "aiAnalysisErrorDismiss": "Dismiss",
+      "jobSidebar": {
+        "environment": "Environment",
+        "executionSteps": "Execution steps ({{count}})",
+        "stepFallback": "Step {{index}}",
+        "noSteps": "No steps found"
+      }
     }
   }
 }

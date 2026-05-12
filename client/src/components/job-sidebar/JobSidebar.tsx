@@ -1,7 +1,9 @@
 import { X, CheckCircle2, Terminal, Box } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useGraphStore } from '../../store/graphStore';
 
 const JobSidebar = () => {
+  const { t } = useTranslation();
   const { selectedNode, setSelectedNode } = useGraphStore();
 
   if (!selectedNode) return null;
@@ -29,7 +31,7 @@ const JobSidebar = () => {
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         <div>
           <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-light-text-muted">
-            Environment
+            {t('ui.dashboardPage.jobSidebar.environment')}
           </h4>
           <div className="inline-flex items-center gap-2 rounded-lg border border-light-border bg-light-bg px-3 py-1.5 text-sm font-medium text-light-text-secondary">
             {jobDetails?.['runs-on'] || 'N/A'}
@@ -38,7 +40,7 @@ const JobSidebar = () => {
 
         <div>
           <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-light-text-muted">
-            Execution Steps ({steps.length})
+            {t('ui.dashboardPage.jobSidebar.executionSteps', { count: steps.length })}
           </h4>
           <div className="relative border-l-2 border-light-border ml-2 space-y-4 pb-4">
             {steps.map((step: any, idx: number) => (
@@ -49,7 +51,10 @@ const JobSidebar = () => {
 
                 <div className="rounded-lg border border-light-border bg-light-bg p-3 shadow-sm hover:border-accent/50 transition-colors">
                   <div className="font-semibold text-sm text-light-text mb-1">
-                    {step.name || `Step ${idx + 1}`}
+                    {step.name ||
+                      t('ui.dashboardPage.jobSidebar.stepFallback', {
+                        index: idx + 1,
+                      })}
                   </div>
 
                   {step.uses && (
@@ -76,7 +81,7 @@ const JobSidebar = () => {
 
             {steps.length === 0 && (
               <p className="pl-6 text-sm text-light-text-muted italic">
-                Кроків не знайдено
+                {t('ui.dashboardPage.jobSidebar.noSteps')}
               </p>
             )}
           </div>

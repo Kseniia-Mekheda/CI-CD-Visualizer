@@ -86,7 +86,13 @@
       "deleteHistoryModalMessage": "Ви впевнені, що хочете видалити цей запис з історії?",
       "deleteHistoryConfirmBtn": "Видалити",
       "deleteHistoryCancelBtn": "Скасувати",
-      "aiAnalysisErrorDismiss": "Закрити"
+      "aiAnalysisErrorDismiss": "Закрити",
+      "jobSidebar": {
+        "environment": "Середовище",
+        "executionSteps": "Кроки виконання ({{count}})",
+        "stepFallback": "Крок {{index}}",
+        "noSteps": "Кроків не знайдено"
+      }
     }
   }
 }
