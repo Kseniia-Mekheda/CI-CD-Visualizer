@@ -133,42 +133,46 @@ def delete_history_item(
     db.commit()
 
 
-@router.put("/update")
-def update_yaml_config(
+@router.put("/history/{config_id}")
+def update_history_item(
+    config_id: UUID,
     request: UpdateConfigRequest,
     db: Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    current_user: User = Depends(get_current_user),
 ):
-    config = db.query(Configuration).filter(
-        Configuration.id == request.config_id,
-        Configuration.user_id == current_user.id
-    ).first()
+    config = (
+        db.query(Configuration)
+        .filter(
+            Configuration.id == config_id,
+            Configuration.user_id == current_user.id,
+        )
+        .first()
+    )
 
     if not config:
         raise HTTPException(status_code=404, detail="CONFIGURATION_NOT_FOUND")
 
     try:
         yaml_data = yaml.safe_load(request.yaml_content)
-        if not yaml_data:
-            raise ValueError("FILE_CANNOT_BE_EMPTY")
-
-        graph_data = generate_graph(yaml_data)
-
-        config.raw_yaml = request.yaml_content
-        config.analysis_result = json.dumps(graph_data)
-        config.ai_report = None
-
-        db.commit()
-
-        return {
-            "message": "CONFIGURATION_UPDATED_SUCCESSFULLY",
-            "graph_data": graph_data,
-            "raw_yaml": request.yaml_content,
-        }
-
-    except yaml.YAMLError as e:
+    except yaml.YAMLError:
         raise HTTPException(status_code=400, detail="YAML_SYNTAX_ERROR")
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail="INTERNAL_ERROR")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="INTERNAL_ERROR")
+
+    if not yaml_data:
+        raise HTTPException(status_code=400, detail="FILE_CANNOT_BE_EMPTY")
+
+    try:
+        graph_data = generate_graph(yaml_data)
+    except ValueError:
+        raise HTTPException(status_code=422, detail="GRAPH_GENERATION_ERROR")
+
+    config.raw_yaml = request.yaml_content
+    config.analysis_result = json.dumps(graph_data)
+    config.ai_report = None
+
+    db.commit()
+
+    return {
+        "message": "CONFIGURATION_UPDATED_SUCCESSFULLY",
+        "graph_data": graph_data,
+        "raw_yaml": request.yaml_content,
+    }

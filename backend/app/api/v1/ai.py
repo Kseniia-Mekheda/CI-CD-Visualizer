@@ -19,18 +19,12 @@ client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 MODEL_NAME = "gemini-3-flash-preview"
 
 
-def _get_cached_ai_report(raw: str | None, requested_locale: str) -> dict | None:
-    """Return cached report dict if it matches locale. Legacy plain JSON is treated as Ukrainian."""
+def _load_ai_reports(raw: str | None) -> dict:
+    """Return per-locale report cache stored in `Configuration.ai_report`."""
     if not raw:
-        return None
+        return {}
     data = json.loads(raw)
-    if isinstance(data, dict) and "report" in data and "locale" in data:
-        if data["locale"] == requested_locale:
-            return data["report"]
-        return None
-    if requested_locale == "uk":
-        return data
-    return None
+    return data if isinstance(data, dict) else {}
 
 
 def _build_prompt(raw_yaml: str, locale: str) -> str:
@@ -69,9 +63,9 @@ async def analyze_pipeline(
     if not config:
         raise HTTPException(status_code=404, detail="CONFIGURATION_NOT_FOUND")
 
-    cached = _get_cached_ai_report(config.ai_report, body.locale)
-    if cached is not None:
-        return cached
+    reports = _load_ai_reports(config.ai_report)
+    if body.locale in reports:
+        return reports[body.locale]
 
     schema_model = AIReportEn if body.locale == "en" else AIReportUk
     prompt = _build_prompt(config.raw_yaml or "", body.locale)
@@ -88,7 +82,8 @@ async def analyze_pipeline(
         )
 
         result = json.loads(response.text)
-        config.ai_report = json.dumps({"locale": body.locale, "report": result})
+        reports[body.locale] = result
+        config.ai_report = json.dumps(reports)
         db.commit()
         db.refresh(config)
         return result

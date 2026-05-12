@@ -153,8 +153,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
     set({ isLoading: true });
     try {
-      const { data } = await api.put(ROUTES.UPDATE_YAML, {
-        config_id: currentConfigId,
+      const { data } = await api.put(ROUTES.HISTORY_BY_ID(currentConfigId), {
         yaml_content: newYaml
       });
 
@@ -199,3 +198,9 @@ export const useGraphStore = create<GraphState>((set, get) => ({
     URL.revokeObjectURL(url);
   }
 }));
+
+i18n.on('languageChanged', () => {
+  const { aiReport, aiAnalysisError } = useGraphStore.getState();
+  if (aiReport === null && aiAnalysisError === null) return;
+  useGraphStore.setState({ aiReport: null, aiAnalysisError: null });
+});

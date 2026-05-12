@@ -50,7 +50,7 @@ const Dashboard = () => {
     <div className="flex h-screen w-full bg-light-bg font-sans overflow-hidden">
       <aside className="w-72 flex flex-col border-r border-light-border bg-light-panel">
         <div className="p-6 border-b border-light-border">
-          <div className="flex items-center gap-2 mb-6">
+          <div className="flex items-center justify-between gap-2 mb-6">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent text-white font-bold">
               <Waypoints size={24} />
             </div>

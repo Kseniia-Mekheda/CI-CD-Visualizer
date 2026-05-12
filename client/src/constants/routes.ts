@@ -9,5 +9,4 @@ export const ROUTES = {
   HISTORY: '/parser/history',
   HISTORY_BY_ID: (id: string) => `/parser/history/${id}`,
   AI_ANALYZE: '/ai/analyze-pipeline',
-  UPDATE_YAML: '/parser/update',
 };
